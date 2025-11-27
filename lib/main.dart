@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 24),
 
               Image.asset(
-                'assets/ruangbercerita_illus.png',
+                'assets/Group 2.png',
                 height: 220,
               ),
 
