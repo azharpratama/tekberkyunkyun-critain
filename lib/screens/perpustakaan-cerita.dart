@@ -7,6 +7,18 @@ class PerpustakaanCerita extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Perpustakaan Cerita',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
+// Screens from Reza branch
+import 'screens/fitur_utama.dart' as rezaHome;
+
+// Screens from main branch
 import 'screens/home-page.dart';
-import 'screens/perpustakaan-cerita.dart';
 import 'screens/dashboard.dart';
 import 'screens/home_screen.dart';
 import 'screens/mentor_screen.dart';
@@ -19,6 +21,7 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
 
+  // Supabase initialization (commented as per main branch)
   // await Supabase.initialize(
   //   url: dotenv.env['SUPABASE_URL']!,
   //   anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
@@ -44,7 +47,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/perpustakaan-cerita': (context) => const PerpustakaanCerita(),
+        '/fitur_utama': (context) => const rezaHome.HomePage(),
         '/dashboard': (context) => const DashboardScreen(title: 'Dashboard'),
         '/home_screen': (context) => const HomeScreen(title: 'Home Screen'),
         '/mentor_screen': (context) => const MentorScreen(),
@@ -55,3 +58,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

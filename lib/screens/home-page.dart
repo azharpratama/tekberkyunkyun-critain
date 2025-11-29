@@ -1,13 +1,75 @@
 import 'package:flutter/material.dart';
+import 'fitur_utama.dart' as reza;
+import 'quotes_screen.dart';
+import 'packages.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      const _HomeContent(),
+      const reza.HomePage(),
+      const QuotesScreen(),
+      const PackagesScreen(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.green.shade600,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.apps),
+            label: 'Fitur',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.format_quote),
+            label: 'Quotes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.card_giftcard),
+            label: 'Packages',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
@@ -44,7 +106,7 @@ class HomePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 32),
 
-                        // Button
+                        // Button - Temukan Partner Bercerita
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/perpustakaan-cerita');
@@ -150,24 +212,23 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildLogoPlaceholder(String text) {
-    return Row(
-      children: [
-        Icon(Icons.token, size: 16, color: Colors.grey[600]),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
+    Widget _buildLogoPlaceholder(String text) {
+      return Row(
+        children: [
+          Icon(Icons.token, size: 16, color: Colors.grey[600]),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
   }
-}
