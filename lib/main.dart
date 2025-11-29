@@ -6,9 +6,10 @@ import 'screens/perpustakaan_cerita.dart';
 import 'screens/quotes_screen.dart';
 import 'screens/packages.dart';
 
-void main() {
   runApp(const MyApp());
 }
+
+final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
