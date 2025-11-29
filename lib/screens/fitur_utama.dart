@@ -160,49 +160,6 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 28),
 
-                // Section Bawah - "Kami di sini untuk membantumu bercerita dan mendengar"
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Kami di sini untuk\nmembantumu bercerita dan\nmendengar',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      
-                      // Bullet points
-                      _buildBulletPoint(
-                        'Setiap individu memiliki kebutuhan berbeda. Kami hadir untuk mendukungmu dengan cara yang paling sesuai.',
-                      ),
-                      _buildBulletPoint(
-                        'Orang yang selalu siap mendengarkan ceritamu dan memberikan saran yang bisa ditindaklanjuti.',
-                      ),
-                      _buildBulletPoint(
-                        'Setiap percakapan dijaga kerahasiaannya. Kepercayaanmu adalah prioritas kami.',
-                      ),
-                      _buildBulletPoint(
-                        'Kami membantu kamu menemukan kenyamanan dan kelegaan dalam setiap cerita.',
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      // Illustration
-                      Center(
-                        child: Image.asset(
-                          'assets/Group 2.png',
-                          height: 250,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                ),
                     ],
                   ),
                 ),
@@ -244,30 +201,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  Widget _buildBulletPoint(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.play_arrow, size: 20, color: Colors.grey),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.4,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-
 
 class FeatureCard extends StatelessWidget {
   final String title;
