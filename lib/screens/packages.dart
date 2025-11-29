@@ -1,119 +1,99 @@
 import 'package:flutter/material.dart';
 
-class PackagesScreen extends StatefulWidget {
+class PackagesScreen extends StatelessWidget {
   const PackagesScreen({super.key});
-
-  @override
-  State<PackagesScreen> createState() => _PackagesScreenState();
-}
-
-class _PackagesScreenState extends State<PackagesScreen> {
-  int _selectedPackageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Paket Konsultasi'),
-        backgroundColor: Colors.green.shade500,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Paket Berlangganan',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Choose of Mental Health\nConsultation Packages for\nYour Needs',
+              'Investasi untuk\nKesehatan Mentalmu',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                height: 1.3,
+                height: 1.2,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Pilih paket yang sesuai dengan kebutuhanmu untuk mendapatkan akses penuh ke fitur eksklusif.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
               ),
             ),
             const SizedBox(height: 32),
-            // Basic Package
-            GestureDetector(
-              onTap: () {
-                setState(() => _selectedPackageIndex = 0);
-              },
-              child: PriceCard(
-                title: 'Basic',
-                price: '\$69.99',
-                period: '/Month',
-                description: 'Lorem ipsum dolor sit amet consectetur.',
-                isActive: _selectedPackageIndex == 0,
-                onSeePrice: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Basic Package Selected')),
-                  );
-                },
-              ),
+
+            // Free Package
+            const PackageCard(
+              title: 'Basic',
+              price: 'Gratis',
+              features: [
+                'Akses ke Ruang Bercerita',
+                'Akses ke Ruang Afirmasi',
+                'Baca Artikel Blog',
+              ],
+              color: Colors.white,
+              textColor: Colors.black,
+              buttonColor: Colors.grey,
+              buttonText: 'Saat Ini',
+              isCurrent: true,
             ),
-            const SizedBox(height: 16),
-            // Standard Package
-            GestureDetector(
-              onTap: () {
-                setState(() => _selectedPackageIndex = 1);
-              },
-              child: PriceCard(
-                title: 'Standard',
-                price: '\$79.99',
-                period: '/Month',
-                description: 'Lorem ipsum dolor sit amet consectetur.',
-                isActive: _selectedPackageIndex == 1,
-                onSeePrice: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Standard Package Selected')),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+
             // Premium Package
-            GestureDetector(
-              onTap: () {
-                setState(() => _selectedPackageIndex = 2);
-              },
-              child: PriceCard(
-                title: 'Premium',
-                price: '\$89.99',
-                period: '/Month',
-                description: 'Lorem ipsum dolor sit amet consectetur.',
-                isActive: _selectedPackageIndex == 2,
-                onSeePrice: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Premium Package Selected')),
-                  );
-                },
-              ),
+            const PackageCard(
+              title: 'Premium',
+              price: 'Rp 49.000',
+              period: '/bulan',
+              features: [
+                'Semua fitur Basic',
+                'Akses Prioritas Mentor',
+                'Konseling 1x sebulan',
+                'Tanpa Iklan',
+              ],
+              color: Color(0xFF3A9D76),
+              textColor: Colors.white,
+              buttonColor: Color(0xFFE87C55),
+              buttonText: 'Berlangganan',
+              isRecommended: true,
             ),
-            const SizedBox(height: 32),
-            // Footer
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-              color: const Color(0xFF3A9D76),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.mic_none_outlined,
-                      color: Colors.white, size: 32),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Memberdayakan Melalui Cerita!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.mic_none_outlined,
-                      color: Colors.white, size: 32),
-                ],
-              ),
+            const SizedBox(height: 24),
+
+            // Professional Package
+            const PackageCard(
+              title: 'Professional',
+              price: 'Rp 149.000',
+              period: '/bulan',
+              features: [
+                'Semua fitur Premium',
+                'Konseling Mingguan',
+                'Webinar Eksklusif',
+                'Laporan Kesehatan Mental',
+              ],
+              color: Colors.white,
+              textColor: Colors.black,
+              buttonColor: Color(0xFF3A9D76),
+              buttonText: 'Berlangganan',
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -121,160 +101,186 @@ class _PackagesScreenState extends State<PackagesScreen> {
   }
 }
 
-class PriceCard extends StatefulWidget {
+class PackageCard extends StatelessWidget {
   final String title;
   final String price;
-  final String period;
-  final String description;
-  final bool isActive;
-  final VoidCallback onSeePrice;
+  final String? period;
+  final List<String> features;
+  final Color color;
+  final Color textColor;
+  final Color buttonColor;
+  final String buttonText;
+  final bool isCurrent;
+  final bool isRecommended;
 
-  const PriceCard({
+  const PackageCard({
     super.key,
     required this.title,
     required this.price,
-    required this.period,
-    required this.description,
-    required this.isActive,
-    required this.onSeePrice,
+    this.period,
+    required this.features,
+    required this.color,
+    required this.textColor,
+    required this.buttonColor,
+    required this.buttonText,
+    this.isCurrent = false,
+    this.isRecommended = false,
   });
 
   @override
-  State<PriceCard> createState() => _PriceCardState();
-}
-
-class _PriceCardState extends State<PriceCard> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    final backgroundColor = _isHovered || widget.isActive
-        ? Colors.green.shade200
-        : Colors.white;
-    final borderColor = _isHovered || widget.isActive
-        ? Colors.green.shade400
-        : Colors.grey.shade300;
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: borderColor,
-            width: 2,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+            border: isRecommended
+                ? Border.all(color: const Color(0xFFE87C55), width: 2)
+                : null,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: widget.price,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade600,
-                            ),
-                          ),
-                          TextSpan(
-                            text: widget.period,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                if (widget.isActive)
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade500,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  )
-                else
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              widget.description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade700,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: widget.onSeePrice,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange.shade400,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'See pricing',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    price,
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      color: textColor,
+                    ),
+                  ),
+                  if (period != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6, left: 4),
+                      child: Text(
+                        period!,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: textColor.withOpacity(0.7),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Divider(),
+              const SizedBox(height: 24),
+              ...features.map((feature) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          color: isRecommended ? Colors.white : Colors.green,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          feature,
+                          style: TextStyle(
+                            color: textColor.withOpacity(0.9),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isCurrent
+                      ? null
+                      : () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Berlangganan'),
+                              content: Text(
+                                  'Anda akan berlangganan paket $title seharga $price${period ?? ""}'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Batal'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Berhasil berlangganan! (Mock)')),
+                                    );
+                                  },
+                                  child: const Text('Konfirmasi'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: buttonColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    disabledBackgroundColor: Colors.grey[300],
+                    disabledForegroundColor: Colors.grey[600],
+                  ),
+                  child: Text(
+                    buttonText,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+        if (isRecommended)
+          Positioned(
+            top: -12,
+            right: 24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE87C55),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Rekomendasi',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
