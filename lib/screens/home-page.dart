@@ -181,28 +181,131 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ),
 
-                  // Landing Page Placeholder
+                  // Section Bawah - "Kami di sini untuk membantumu bercerita dan mendengar"
                   Container(
-                    height: 600,
-                    width: double.infinity,
-                    color: Colors.grey[100],
+                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.web_asset, size: 64, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Landing Page Content',
+                        const Text(
+                          'Kami di sini untuk\nmembantumu bercerita dan\nmendengar',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 26,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[600],
+                            height: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Additional sections will go here',
-                          style: TextStyle(color: Colors.grey[500]),
+                        const SizedBox(height: 24),
+                        
+                        // Bullet points
+                        _buildBulletPoint(
+                          'Setiap individu memiliki kebutuhan berbeda. Kami hadir untuk mendukungmu dengan cara yang paling sesuai.',
+                        ),
+                        _buildBulletPoint(
+                          'Orang yang selalu siap mendengarkan ceritamu dan memberikan saran yang bisa diandalkan.',
+                        ),
+                        _buildBulletPoint(
+                          'Setiap percakapan dijaga kerahasiaannya. Kepercayaanmu adalah prioritas kami.',
+                        ),
+                        _buildBulletPoint(
+                          'Kami membantu kamu menemukan kenyamanan dan kelegaan dalam setiap cerita.',
+                        ),
+                        const SizedBox(height: 32),
+                        
+                        // Illustration
+                        Center(
+                          child: Image.asset(
+                            'assets/Group 2.png',
+                            height: 250,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
+
+                  // Services Section
+                  Container(
+                    width: double.infinity,
+                    color: const Color(0xFF1E1E1E), // Dark background
+                    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Services',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Empowering Minds Our\nMental Health\nConsulting Services',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        
+                        // Mental Counseling Card
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2C2C2C), // Slightly lighter dark
+                            borderRadius: BorderRadius.circular(0), // Sharp edges as per design
+                          ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Mental Counseling',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Lorem ipsum dolor sit amet\nconsectetur Convallis est',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 16,
+                                  height: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Action for detail
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE87C55), // Orange color
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32, vertical: 16),
+                                ),
+                                child: const Text(
+                                  'See detail',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -229,6 +332,29 @@ class _HomeContent extends StatelessWidget {
             ),
           ),
         ],
+      );
+    }
+
+
+    Widget _buildBulletPoint(String text) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.play_arrow, size: 20, color: Colors.grey),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     }
   }
