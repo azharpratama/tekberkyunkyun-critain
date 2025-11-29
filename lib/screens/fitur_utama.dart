@@ -195,7 +195,7 @@ class _HomePageState extends State<HomePage> {
 
                 // Ilustrasi
                 Image.asset(
-                  'assets/ruangbercerita_illus.png',
+                  'assets/Group 2.png',
                   height: 220,
                 ),
 
