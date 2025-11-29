@@ -5,8 +5,8 @@ import 'team_screen.dart';
 import 'maps_screen.dart';
 import 'testimonials_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.title});
+class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key, required this.title});
   final String title;
 
   // Widget pembantu untuk membuat tombol navigasi
