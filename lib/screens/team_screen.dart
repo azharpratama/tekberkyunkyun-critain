@@ -6,17 +6,19 @@ class TeamScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String headerTitle = 'Team';
-    const String mainHeading = 'Caring for Your Mental Health Get to Know Our Team of Experts';
-    const String bodyText = 'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla diam lorem non mauris. Ultrices aliquet at quam adipiscing.';
+    const String mainHeading =
+        'Caring for Your Mental Health Get to Know Our Team of Experts';
+    const String bodyText =
+        'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla diam lorem non mauris. Ultrices aliquet at quam adipiscing.';
 
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 headerTitle,
                 style: TextStyle(
                   fontSize: 24,
@@ -24,9 +26,8 @@ class TeamScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 10),
-
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 mainHeading,
                 style: TextStyle(
                   fontSize: 32,
@@ -35,9 +36,8 @@ class TeamScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
-
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 bodyText,
                 style: TextStyle(
                   fontSize: 16,
@@ -45,29 +45,30 @@ class TeamScreen extends StatelessWidget {
                   color: Colors.grey,
                 ),
               ),
-              
-              Spacer(),
-
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
                   onPressed: null,
                   style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Color(0xFFF18E5E)),
-                    shape: MaterialStatePropertyAll(
+                    backgroundColor: WidgetStatePropertyAll(Color(0xFFF18E5E)),
+                    shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'See more',
-                    style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

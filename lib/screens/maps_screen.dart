@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const String _BACKGROUND_ASSET = 'assets/maps_background.png'; 
-const String _MAP_IMAGE_ASSET = 'assets/map_placeholder.png'; 
+const String _backgroundAsset = 'assets/maps_background.png';
+const String _mapImageAsset = 'assets/map_placeholder.png';
 
 class MapsScreen extends StatelessWidget {
   const MapsScreen({super.key});
@@ -11,16 +11,15 @@ class MapsScreen extends StatelessWidget {
     const Color greenColor = Color(0xFF5AB664);
 
     return Scaffold(
-      backgroundColor: Colors.transparent, 
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image(
-              image: const AssetImage(_BACKGROUND_ASSET),
+              image: const AssetImage(_backgroundAsset),
               fit: BoxFit.cover,
             ),
           ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -45,17 +44,18 @@ class MapsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 20),
                       padding: const EdgeInsets.all(8),
-                      
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: const [
-                          BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 5)),
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 15,
+                              offset: Offset(0, 5)),
                         ],
                       ),
                       child: ClipRRect(
@@ -64,11 +64,10 @@ class MapsScreen extends StatelessWidget {
                           children: [
                             Positioned.fill(
                               child: Image.asset(
-                                _MAP_IMAGE_ASSET,
+                                _mapImageAsset,
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            
                             const Center(
                               child: Icon(
                                 Icons.location_on,

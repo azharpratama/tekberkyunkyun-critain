@@ -45,7 +45,7 @@ class QuotePage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background patterns (optional, simplified as circles/lines if needed, 
+          // Background patterns (optional, simplified as circles/lines if needed,
           // but for now just gradient is fine or we can add some CustomPaint later)
           Positioned(
             top: -50,
@@ -55,11 +55,12 @@ class QuotePage extends StatelessWidget {
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1), width: 1),
               ),
             ),
           ),
-           Positioned(
+          Positioned(
             top: -20,
             right: -20,
             child: Container(
@@ -67,13 +68,15 @@ class QuotePage extends StatelessWidget {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1), width: 1),
               ),
             ),
           ),
-          
+
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +88,7 @@ class QuotePage extends StatelessWidget {
                   color: Colors.white70,
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Quote Text
                 Text(
                   quote,
@@ -94,13 +97,14 @@ class QuotePage extends StatelessWidget {
                     fontSize: 24,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
-                    fontFamily: 'Roboto', // Default flutter font, but good to specify if we had custom
+                    fontFamily:
+                        'Roboto', // Default flutter font, but good to specify if we had custom
                   ),
                   textAlign: TextAlign.left,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Closing Quote Icon
                 const Align(
                   alignment: Alignment.centerRight,
@@ -113,7 +117,7 @@ class QuotePage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Footer
           Positioned(
             bottom: 32,
@@ -127,7 +131,7 @@ class QuotePage extends StatelessWidget {
                 Text(
                   "Memberdayakan Melalui Cerita!",
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

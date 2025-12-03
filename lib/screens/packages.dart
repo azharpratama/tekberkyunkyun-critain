@@ -140,7 +140,7 @@ class PackageCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -179,7 +179,7 @@ class PackageCard extends StatelessWidget {
                         period!,
                         style: TextStyle(
                           fontSize: 14,
-                          color: textColor.withOpacity(0.7),
+                          color: textColor.withValues(alpha: 0.7),
                         ),
                       ),
                     ),
@@ -201,7 +201,7 @@ class PackageCard extends StatelessWidget {
                         Text(
                           feature,
                           style: TextStyle(
-                            color: textColor.withOpacity(0.9),
+                            color: textColor.withValues(alpha: 0.9),
                             fontSize: 14,
                           ),
                         ),

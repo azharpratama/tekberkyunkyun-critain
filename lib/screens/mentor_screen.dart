@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-const String _BACKGROUND_IMAGE = 'assets/background_mentor.png';
-const String _ICON_GROWTH = 'assets/icon_professional_growth.png';
-const String _ICON_BURNOUT = 'assets/icon_reduced_burnout.png';
-const String _ICON_FOOTER = 'assets/icon_footer_star.png'; 
+const String _backgroundImage = 'assets/background_mentor.png';
+const String _iconGrowth = 'assets/icon_professional_growth.png';
+const String _iconBurnout = 'assets/icon_reduced_burnout.png';
+const String _iconFooter = 'assets/icon_footer_star.png';
 
 class MentorScreen extends StatelessWidget {
   const MentorScreen({super.key});
@@ -20,9 +20,9 @@ class MentorScreen extends StatelessWidget {
       children: [
         Image.asset(
           iconPath,
-          width: 40, 
+          width: 40,
           height: 40,
-          color: textColor, 
+          color: textColor,
         ),
         const SizedBox(width: 20),
         Expanded(
@@ -43,7 +43,7 @@ class MentorScreen extends StatelessWidget {
                 description,
                 style: TextStyle(
                   fontSize: 14,
-                  color: textColor.withOpacity(0.7),
+                  color: textColor.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -56,13 +56,13 @@ class MentorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, 
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image(
-              image: const AssetImage(_BACKGROUND_IMAGE),
-              fit: BoxFit.cover, 
+              image: const AssetImage(_backgroundImage),
+              fit: BoxFit.cover,
             ),
           ),
           SafeArea(
@@ -88,23 +88,25 @@ class MentorScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   _buildFeatureItem(
-                    iconPath: _ICON_GROWTH,
+                    iconPath: _iconGrowth,
                     title: 'Professional\nGrowth',
-                    description: 'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla',
+                    description:
+                        'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla',
                   ),
                   const SizedBox(height: 30),
                   _buildFeatureItem(
-                    iconPath: _ICON_BURNOUT,
+                    iconPath: _iconBurnout,
                     title: 'Reduced\nBurnout',
-                    description: 'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla',
+                    description:
+                        'Lorem ipsum dolor sit amet consectetur. Convallis est urna adipiscing fringilla nulla',
                   ),
                   const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image(
-                        image: const AssetImage(_ICON_FOOTER),
-                        width: 24, 
+                        image: const AssetImage(_iconFooter),
+                        width: 24,
                         height: 24,
                         color: textColor,
                       ),

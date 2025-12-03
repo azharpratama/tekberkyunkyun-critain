@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ruang_afirmasi.dart';
 import 'ruang_bercerita.dart';
-import 'perpustakaan-cerita.dart';
+import 'perpustakaan_cerita.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -83,89 +83,90 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18).copyWith(top: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 18)
+                      .copyWith(top: 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                const SizedBox(height: 6),
-                const Text(
-                  "Temukan Fitur yang\nMembantumu\nMenjadi Lebih Baik",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Critain dilengkapi dengan berbagai fitur yang dirancang untuk\nmembantumu mengelola kesehatan mental dengan lebih baik.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
-                ),
-
-                const SizedBox(height: 28),
-
-                // Slide area
-                SizedBox(
-                  height: 220,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: features.length,
-                    itemBuilder: (context, index) {
-                      final f = features[index];
-                      final bool active = index == _currentPage;
-                      return AnimatedPadding(
-                        duration: const Duration(milliseconds: 300),
-                        padding: EdgeInsets.only(
-                          right: 12,
-                          left: 12,
-                          top: active ? 0 : 12,
-                          bottom: active ? 0 : 12,
+                      const SizedBox(height: 6),
+                      const Text(
+                        "Temukan Fitur yang\nMembantumu\nMenjadi Lebih Baik",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          height: 1.1,
                         ),
-                        child: GestureDetector(
-                          onTap: () => _openFeature(index),
-                          child: FeatureCard(
-                            title: f.title,
-                            description: f.description,
-                            icon: f.icon,
-                            highlight: active,
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Critain dilengkapi dengan berbagai fitur yang dirancang untuk\nmembantumu mengelola kesehatan mental dengan lebih baik.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // Slide area
+                      SizedBox(
+                        height: 220,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: features.length,
+                          itemBuilder: (context, index) {
+                            final f = features[index];
+                            final bool active = index == _currentPage;
+                            return AnimatedPadding(
+                              duration: const Duration(milliseconds: 300),
+                              padding: EdgeInsets.only(
+                                right: 12,
+                                left: 12,
+                                top: active ? 0 : 12,
+                                bottom: active ? 0 : 12,
+                              ),
+                              child: GestureDetector(
+                                onTap: () => _openFeature(index),
+                                child: FeatureCard(
+                                  title: f.title,
+                                  description: f.description,
+                                  icon: f.icon,
+                                  highlight: active,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Dots indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          features.length,
+                          (i) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            width: _currentPage == i ? 22 : 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: _currentPage == i
+                                  ? Colors.green.shade600
+                                  : Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 14),
-
-                // Dots indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    features.length,
-                    (i) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                      width: _currentPage == i ? 22 : 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: _currentPage == i ? Colors.green.shade600 : Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  ),
-                ),
 
-                const SizedBox(height: 28),
-
+                      const SizedBox(height: 28),
                     ],
                   ),
                 ),
               ),
             ),
-            
+
             // Footer button - Full Screen
             Container(
               width: double.infinity,
@@ -220,7 +221,8 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color bg = highlight ? Colors.green.shade200 : Colors.white;
-    final border = highlight ? Border.all(color: Colors.green.shade400, width: 0) : null;
+    final border =
+        highlight ? Border.all(color: Colors.green.shade400, width: 0) : null;
 
     return Material(
       elevation: 6,

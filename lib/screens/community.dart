@@ -9,7 +9,8 @@ class CommunityItem {
   final String description;
   final String imageUrl; // Placeholder untuk gambar
 
-  CommunityItem({required this.title, required this.description, required this.imageUrl});
+  CommunityItem(
+      {required this.title, required this.description, required this.imageUrl});
 }
 
 // Data dummy untuk ditampilkan
@@ -26,7 +27,8 @@ final List<CommunityItem> _communityItems = [
   ),
   CommunityItem(
     title: 'Wellness',
-    description: 'Sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.',
+    description:
+        'Sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.',
     imageUrl: 'assets/image3.jpg',
   ),
 ];
@@ -69,8 +71,10 @@ class CommunityPage extends StatelessWidget {
 
               // Daftar Kartu Komunitas
               ListView.builder(
-                shrinkWrap: true, // Penting agar ListView bisa berada di dalam SingleChildScrollView
-                physics: const NeverScrollableScrollPhysics(), // Menonaktifkan scrolling ganda
+                shrinkWrap:
+                    true, // Penting agar ListView bisa berada di dalam SingleChildScrollView
+                physics:
+                    const NeverScrollableScrollPhysics(), // Menonaktifkan scrolling ganda
                 itemCount: _communityItems.length,
                 itemBuilder: (context, index) {
                   final item = _communityItems[index];
@@ -92,7 +96,7 @@ class CommunityPage extends StatelessWidget {
     return InkWell(
       onTap: () {
         // TODO: Tambahkan logika navigasi ke detail komunitas
-        print('Navigasi ke ${item.title}');
+        // print('Navigasi ke ${item.title}');
       },
       child: Container(
         height: 180, // Tinggi kartu yang ditetapkan
@@ -101,7 +105,7 @@ class CommunityPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -120,7 +124,8 @@ class CommunityPage extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'Gambar Placeholder',
-                    style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                    style:
+                        TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                   ),
                 ),
               ),
@@ -134,8 +139,8 @@ class CommunityPage extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.4),
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha: 0.4),
+                    Colors.black.withValues(alpha: 0.7),
                   ],
                 ),
               ),
@@ -161,7 +166,7 @@ class CommunityPage extends StatelessWidget {
                     item.description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

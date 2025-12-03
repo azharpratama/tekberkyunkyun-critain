@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'screens/fitur_utama.dart' as fitur_utama;
-import 'screens/home-page.dart';
+import 'screens/home_page.dart';
 import 'screens/dashboard.dart';
 import 'screens/home_screen.dart';
 import 'screens/mentor_screen.dart';
@@ -15,10 +14,12 @@ import 'screens/ruang_bercerita.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/faq_page.dart';
+import 'screens/blog_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  usePathUrlStrategy();
+  // usePathUrlStrategy();
 
   await dotenv.load(fileName: ".env");
 
@@ -57,6 +58,8 @@ class MyApp extends StatelessWidget {
         '/maps_screen': (context) => const MapsScreen(),
         '/testimonials_screen': (context) => const TestimonialsScreen(),
         '/ruang-bercerita': (context) => const RuangBerceritaPage(),
+        '/faq': (context) => const FAQPage(),
+        '/blog': (context) => const BlogPage(),
       },
     );
   }

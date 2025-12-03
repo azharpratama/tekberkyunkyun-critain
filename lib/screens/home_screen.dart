@@ -6,14 +6,15 @@ import 'maps_screen.dart';
 import 'testimonials_screen.dart';
 
 // Konstanta Aset dan Warna
-const String _BACKGROUND_ASSET = 'assets/maps_background.png';
-const Color _GREEN_COLOR = Color(0xFF5AB664);
+const String _backgroundAsset = 'assets/maps_background.png';
+const Color _greenColor = Color(0xFF5AB664);
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.title});
   final String title;
 
-  Widget _buildNavButton(BuildContext context, String title, Widget targetScreen) {
+  Widget _buildNavButton(
+      BuildContext context, String title, Widget targetScreen) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ElevatedButton(
@@ -26,7 +27,7 @@ class HomeScreen extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
           textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          backgroundColor: _GREEN_COLOR, // Menggunakan warna hijau tema
+          backgroundColor: _greenColor, // Menggunakan warna hijau tema
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -43,7 +44,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       // Atur Scaffold menjadi transparan untuk menampilkan Stack Background
       backgroundColor: Colors.transparent,
-      // Hapus AppBar agar tampilan lebih bersih dan fullscreen, 
+      // Hapus AppBar agar tampilan lebih bersih dan fullscreen,
       // atau gunakan AppBar transparan jika diperlukan judul
       appBar: AppBar(
         title: Text(title),
@@ -55,7 +56,7 @@ class HomeScreen extends StatelessWidget {
           // 1. Latar Belakang (maps_background.png)
           Positioned.fill(
             child: Image(
-              image: const AssetImage(_BACKGROUND_ASSET),
+              image: const AssetImage(_backgroundAsset),
               fit: BoxFit.cover,
             ),
           ),
@@ -75,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: _GREEN_COLOR, 
+                        color: _greenColor,
                       ),
                     ),
                     const Text(
@@ -83,16 +84,18 @@ class HomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey, 
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 50),
 
                     // Tombol Navigasi
-                    _buildNavButton(context, 'Mentor Screen', const MentorScreen()),
+                    _buildNavButton(
+                        context, 'Mentor Screen', const MentorScreen()),
                     _buildNavButton(context, 'Team Screen', const TeamScreen()),
                     _buildNavButton(context, 'Maps Screen', const MapsScreen()),
-                    _buildNavButton(context, 'Testimonials Screen', const TestimonialsScreen()),
+                    _buildNavButton(context, 'Testimonials Screen',
+                        const TestimonialsScreen()),
                   ],
                 ),
               ),
