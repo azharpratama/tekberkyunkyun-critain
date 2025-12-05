@@ -12,28 +12,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = MockAuthService();
+  final _authService = AuthService();
   bool _isLoading = false;
 
   Future<void> _handleRegister() async {
-    setState(() => _isLoading = true);
-
-    final success = await _authService.register(
-      _nameController.text,
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    setState(() => _isLoading = false);
-
-    if (success && mounted) {
-      // Navigate to Home and remove all previous routes
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-    } else if (mounted) {
+    // Validate inputs
+    if (_nameController.text.trim().isEmpty ||
+        _emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Register failed. Please fill all fields.')),
+          content: Text('Mohon isi semua kolom'),
+          backgroundColor: Colors.orange,
+        ),
       );
+      return;
+    }
+
+    // Validate password length
+    if (_passwordController.text.trim().length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password minimal 6 karakter'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await _authService.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        displayName: _nameController.text.trim(),
+      );
+
+      setState(() => _isLoading = false);
+
+      if (response.user != null && mounted) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Akun berhasil dibuat! Silakan login.'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Navigate to login instead of home (since email needs confirmation)
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) {
+          Navigator.pop(context); // Go back to login
+        }
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        String errorMessage = _getErrorMessage(e.toString());
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getErrorMessage(String error) {
+    if (error.contains('already_registered') ||
+        error.contains('already exists')) {
+      return 'Email sudah terdaftar. Silakan login atau gunakan email lain.';
+    } else if (error.contains('invalid_email') ||
+        error.contains('Invalid email')) {
+      return 'Format email tidak valid.';
+    } else if (error.contains('weak_password')) {
+      return 'Password terlalu lemah. Gunakan minimal 6 karakter.';
+    } else if (error.contains('network')) {
+      return 'Koneksi internet bermasalah. Silakan coba lagi.';
+    } else {
+      return 'Pendaftaran gagal. Silakan coba lagi.';
     }
   }
 

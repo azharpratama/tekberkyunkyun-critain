@@ -5,7 +5,7 @@ import '../../widgets/home/daily_quote_card.dart';
 import '../../widgets/home/quick_actions_grid.dart';
 import '../../widgets/home/mental_health_tips_card.dart';
 import '../features/perpustakaan_cerita/perpustakaan_cerita_screen.dart';
-import '../features/story/story_screen.dart';
+import '../features/ruang_bercerita/ruang_bercerita_screen.dart';
 import '../features/affirmation/affirmation_screen.dart';
 import '../features/profile/profile_screen.dart';
 
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     _screens = [
       _HomeContent(
           onTabChange: (index) => setState(() => _currentIndex = index)),
-      const StoryScreen(),
+      const RuangBerceritaScreen(),
       const AffirmationScreen(),
       const PerpustakaanCeritaScreen(),
       const ProfileScreen(),

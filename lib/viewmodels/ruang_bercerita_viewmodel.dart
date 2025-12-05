@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_stats.dart';
 import '../models/message.dart';
 
-class StoryViewModel extends ChangeNotifier {
+class RuangBerceritaViewModel extends ChangeNotifier {
   // State
   int _currentStep = 0; // 0 = Intro, 1 = Searching/Waiting, 2 = Chat
   bool _isInSession = false;

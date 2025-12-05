@@ -115,24 +115,43 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
         ),
         const SizedBox(height: AppDimens.p24),
         Expanded(
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) => vm.setAffirmationIndex(index),
-            itemCount: 10000,
-            itemBuilder: (context, index) {
-              final actualIndex = index % vm.affirmations.length;
-              final affirmation = vm.affirmations[actualIndex];
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimens.p32, vertical: AppDimens.p16),
-                child: AffirmationCard(
-                  text: affirmation.text,
-                  backgroundColor: affirmation.color,
-                  textColor: Colors.black87,
-                ),
-              );
-            },
-          ),
+          child: vm.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : vm.affirmations.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.sentiment_dissatisfied,
+                              size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Belum ada afirmasi tersedia',
+                            style: AppTextStyles.bodyMedium
+                                .copyWith(color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    )
+                  : PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (index) => vm.setAffirmationIndex(index),
+                      itemCount: 10000,
+                      itemBuilder: (context, index) {
+                        final actualIndex = index % vm.affirmations.length;
+                        final affirmation = vm.affirmations[actualIndex];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppDimens.p32,
+                              vertical: AppDimens.p16),
+                          child: AffirmationCard(
+                            text: affirmation.text,
+                            backgroundColor: affirmation.color,
+                            textColor: Colors.black87,
+                          ),
+                        );
+                      },
+                    ),
         ),
         const SizedBox(height: AppDimens.p24),
         Padding(
@@ -145,16 +164,18 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
                   AnimatedHeartButton(
                     isSaved: vm.isCurrentAffirmationSaved(),
                     transparent: true,
-                    onTap: () {
-                      vm.toggleSaveCurrentAffirmation();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(vm.isCurrentAffirmationSaved()
-                              ? AppStrings.affirmationSaved
-                              : AppStrings.affirmationRemoved),
-                          backgroundColor: AppColors.primary,
-                        ),
-                      );
+                    onTap: () async {
+                      await vm.toggleSaveCurrentAffirmation();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(vm.isCurrentAffirmationSaved()
+                                ? AppStrings.affirmationSaved
+                                : AppStrings.affirmationRemoved),
+                            backgroundColor: AppColors.primary,
+                          ),
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: AppDimens.p4),
@@ -273,7 +294,7 @@ class _SendAffirmationTabState extends State<_SendAffirmationTab> {
     super.dispose();
   }
 
-  void _sendAffirmation(AffirmationViewModel vm) {
+  void _sendAffirmation(AffirmationViewModel vm) async {
     if (!vm.canSend()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -284,34 +305,59 @@ class _SendAffirmationTabState extends State<_SendAffirmationTab> {
       return;
     }
 
+    // Show loading
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimens.r16)),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: AppColors.success, size: 28),
-            SizedBox(width: 8),
-            Text(AppStrings.sendSuccessTitle),
-          ],
-        ),
-        content: const Text(AppStrings.sendSuccessMessage),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              vm.clearMessage();
-              _controller.clear();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.accentRed,
-            ),
-            child: const Text(AppStrings.close),
-          ),
-        ],
-      ),
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
+
+    // Send to database
+    final success = await vm.sendAffirmation();
+
+    // Close loading
+    if (mounted) Navigator.pop(context);
+
+    // Show result
+    if (mounted) {
+      if (success) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppDimens.r16)),
+            title: const Row(
+              children: [
+                Icon(Icons.check_circle, color: AppColors.success, size: 28),
+                SizedBox(width: 8),
+                Text('Berhasil Terkirim!'),
+              ],
+            ),
+            content: const Text(
+                'Afirmasimu telah berhasil dibagikan ke komunitas ❤️'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _controller.clear();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentRed,
+                ),
+                child: const Text(AppStrings.close),
+              ),
+            ],
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Gagal mengirim afirmasi. Silakan coba lagi.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import '../../viewmodels/story_viewmodel.dart';
+import '../../viewmodels/ruang_bercerita_viewmodel.dart';
 import '../../core/theme/app_colors.dart';
 import '../animations/typing_indicator.dart';
 import '../common/custom_text_field.dart';
@@ -43,7 +43,7 @@ class _ChatViewState extends State<ChatView> {
     });
   }
 
-  void _sendMessage(StoryViewModel vm) {
+  void _sendMessage(RuangBerceritaViewModel vm) {
     if (_messageController.text.trim().isEmpty) return;
     vm.sendMessage(_messageController.text);
     _messageController.clear();
@@ -52,7 +52,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StoryViewModel>(
+    return Consumer<RuangBerceritaViewModel>(
       builder: (context, vm, child) {
         // Auto-scroll when messages change or typing status changes
         // Note: This might trigger too often, but for now it ensures visibility
