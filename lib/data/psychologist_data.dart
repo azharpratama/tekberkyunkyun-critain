@@ -5,8 +5,7 @@ final List<Psychologist> mockPsychologists = [
     id: '1',
     name: 'Dr. Sarah Wijaya',
     title: 'M.Psi., Psikolog Klinis',
-    photoUrl:
-        'https://ui-avatars.com/api/?name=Sarah+Wijaya&background=4A90E2&color=fff&size=200',
+    photoUrl: 'assets/konsultasi1.jpeg',
     specializations: ['Anxiety', 'Depression', 'Stress Management'],
     rating: 4.9,
     reviewCount: 142,
@@ -26,8 +25,7 @@ final List<Psychologist> mockPsychologists = [
     id: '2',
     name: 'Dr. Budi Santoso',
     title: 'M.Psi., Psikolog',
-    photoUrl:
-        'https://ui-avatars.com/api/?name=Budi+Santoso&background=3A9D76&color=fff&size=200',
+    photoUrl: 'assets/konsultasi2.jpeg',
     specializations: ['Career Counseling', 'Work-Life Balance', 'Burnout'],
     rating: 4.7,
     reviewCount: 98,
@@ -45,8 +43,7 @@ final List<Psychologist> mockPsychologists = [
     id: '3',
     name: 'Dr. Rina Kusuma',
     title: 'M.Psi., Psikolog Klinis',
-    photoUrl:
-        'https://ui-avatars.com/api/?name=Rina+Kusuma&background=E57373&color=fff&size=200',
+    photoUrl: 'assets/konsultasi3.jpeg',
     specializations: ['Relationship Issues', 'Self-esteem', 'Trauma'],
     rating: 4.8,
     reviewCount: 127,
@@ -66,8 +63,7 @@ final List<Psychologist> mockPsychologists = [
     id: '4',
     name: 'Dr. Ahmad Rizki',
     title: 'M.Psi., Psikolog',
-    photoUrl:
-        'https://ui-avatars.com/api/?name=Ahmad+Rizki&background=9C27B0&color=fff&size=200',
+    photoUrl: 'assets/konsultasi4.jpeg',
     specializations: ['Young Adults', 'Academic Stress', 'Identity Crisis'],
     rating: 4.6,
     reviewCount: 84,
@@ -86,8 +82,7 @@ final List<Psychologist> mockPsychologists = [
     id: '5',
     name: 'Dr. Maya Sari',
     title: 'M.Psi., Psikolog Klinis',
-    photoUrl:
-        'https://ui-avatars.com/api/?name=Maya+Sari&background=FF9800&color=fff&size=200',
+    photoUrl: 'assets/konsultasi5.jpeg',
     specializations: ['PTSD', 'Grief & Loss', 'Emotional Regulation'],
     rating: 4.9,
     reviewCount: 156,

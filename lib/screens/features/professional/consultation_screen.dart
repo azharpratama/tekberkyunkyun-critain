@@ -57,9 +57,10 @@ class _ConsultationContent extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
+              // Updated to purple
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.secondary, AppColors.secondaryDark],
+                  colors: [AppColors.accentPurple, Color(0xFF7B1FA2)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
