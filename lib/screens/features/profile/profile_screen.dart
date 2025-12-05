@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/constants/app_assets.dart';
 import '../../../viewmodels/profile_viewmodel.dart';
 import '../professional/subscription_screen.dart';
 import '../professional/consultation_screen.dart';
 import '../affirmation/saved_affirmations_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -53,10 +53,7 @@ class _ProfileContent extends StatelessWidget {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: vm.avatarUrl.isNotEmpty
-                      ? NetworkImage(vm.avatarUrl)
-                      : const AssetImage(AppAssets.profilePlaceholder)
-                          as ImageProvider,
+                  backgroundImage: vm.profileImage,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -80,6 +77,26 @@ class _ProfileContent extends StatelessWidget {
                   'Member sejak 2025',
                   style: AppTextStyles.bodyMedium
                       .copyWith(color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EditProfileScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.edit_outlined, size: 18),
+                  label: const Text('Edit Profil'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
               ],
             ),
