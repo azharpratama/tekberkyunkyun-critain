@@ -1,6 +1,6 @@
 import '../models/user_story.dart';
 
-const List<UserStory> userStories = [
+final List<UserStory> userStories = [
   UserStory(
     id: '1',
     title: 'Mengenal Anxiety: Lebih dari Sekadar Rasa Cemas',
