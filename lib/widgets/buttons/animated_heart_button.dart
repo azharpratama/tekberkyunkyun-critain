@@ -61,9 +61,9 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -72,7 +72,7 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
             color: widget.isSaved
                 ? Colors.red
                 : (widget.transparent ? AppColors.accentRed : Colors.grey),
-            size: 28,
+            size: 24,
           ),
         ),
       ),
