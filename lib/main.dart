@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+import 'core/theme/app_theme.dart';
+import 'viewmodels/profile_viewmodel.dart';
 
-import 'screens/fitur_utama.dart' as fitur_utama;
-import 'screens/home_page.dart';
-import 'screens/dashboard.dart';
-import 'screens/home_screen.dart';
-import 'screens/mentor_screen.dart';
-import 'screens/team_screen.dart';
-import 'screens/maps_screen.dart';
-import 'screens/testimonials_screen.dart';
-import 'screens/ruang_bercerita.dart';
+import 'screens/startup/splash_screen.dart';
+import 'screens/main/home_page.dart';
+import 'screens/features/story/story_screen.dart';
+import 'screens/features/profile/profile_screen.dart';
+import 'screens/features/affirmation/affirmation_screen.dart';
+import 'screens/features/perpustakaan_cerita/perpustakaan_cerita_screen.dart';
 
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/faq_page.dart';
-import 'screens/blog_page.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,29 +36,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ceritain',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+      ],
+      child: MaterialApp(
+        title: 'Ceritain',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        home: const SplashScreen(),
+        routes: {
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterScreen(),
+          '/home': (context) => const HomePage(),
+          '/story': (context) => const StoryScreen(),
+          '/affirmation': (context) => const AffirmationScreen(),
+          '/explore': (context) => const PerpustakaanCeritaScreen(),
+          '/profile': (context) => const ProfileScreen(),
+        },
       ),
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/': (context) => const HomePage(),
-        '/fitur_utama': (context) => const fitur_utama.HomePage(),
-        '/dashboard': (context) => const DashboardScreen(title: 'Dashboard'),
-        '/home_screen': (context) => const HomeScreen(title: 'Home Screen'),
-        '/mentor_screen': (context) => const MentorScreen(),
-        '/team_screen': (context) => const TeamScreen(),
-        '/maps_screen': (context) => const MapsScreen(),
-        '/testimonials_screen': (context) => const TestimonialsScreen(),
-        '/ruang-bercerita': (context) => const RuangBerceritaPage(),
-        '/faq': (context) => const FAQPage(),
-        '/blog': (context) => const BlogPage(),
-      },
     );
   }
 }
