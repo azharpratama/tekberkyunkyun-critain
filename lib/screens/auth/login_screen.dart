@@ -11,26 +11,65 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = MockAuthService();
+  final _authService = AuthService();
   bool _isLoading = false;
 
   Future<void> _handleLogin() async {
+    // Validate inputs
+    if (_emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mohon isi semua kolom'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
-    final success = await _authService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    setState(() => _isLoading = false);
-
-    if (success && mounted) {
-      // Navigate to Home and remove all previous routes
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed. Please fill all fields.')),
+    try {
+      final response = await _authService.signIn(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
+
+      setState(() => _isLoading = false);
+
+      if (response.user != null && mounted) {
+        // Success! Navigate to home
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        // Parse error message and show user-friendly message
+        String errorMessage = _getErrorMessage(e.toString());
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getErrorMessage(String error) {
+    if (error.contains('email_not_confirmed') ||
+        error.contains('Email not confirmed')) {
+      return 'Silakan verifikasi email Anda terlebih dahulu. Cek inbox atau folder spam.';
+    } else if (error.contains('invalid_credentials') ||
+        error.contains('Invalid login')) {
+      return 'Email atau password salah. Silakan coba lagi.';
+    } else if (error.contains('network')) {
+      return 'Koneksi internet bermasalah. Silakan coba lagi.';
+    } else {
+      return 'Login gagal. Pastikan email dan password benar.';
     }
   }
 

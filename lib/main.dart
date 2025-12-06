@@ -8,7 +8,7 @@ import 'viewmodels/profile_viewmodel.dart';
 
 import 'screens/startup/splash_screen.dart';
 import 'screens/main/home_page.dart';
-import 'screens/features/story/story_screen.dart';
+import 'screens/features/ruang_bercerita/ruang_bercerita_screen.dart';
 import 'screens/features/profile/profile_screen.dart';
 import 'screens/features/affirmation/affirmation_screen.dart';
 import 'screens/features/perpustakaan_cerita/perpustakaan_cerita_screen.dart';
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const HomePage(),
-          '/story': (context) => const StoryScreen(),
+          '/story': (context) => const RuangBerceritaScreen(),
           '/affirmation': (context) => const AffirmationScreen(),
           '/explore': (context) => const PerpustakaanCeritaScreen(),
           '/profile': (context) => const ProfileScreen(),
