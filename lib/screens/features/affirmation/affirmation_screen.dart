@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -157,51 +158,50 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDimens.p24),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  AnimatedHeartButton(
-                    isSaved: vm.isCurrentAffirmationSaved(),
-                    transparent: true,
-                    onTap: () async {
-                      await vm.toggleSaveCurrentAffirmation();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(vm.isCurrentAffirmationSaved()
-                                ? AppStrings.affirmationSaved
-                                : AppStrings.affirmationRemoved),
-                            backgroundColor: AppColors.primary,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: AppDimens.p4),
-                  Text(
-                    AppStrings.save,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: vm.isCurrentAffirmationSaved()
-                          ? AppColors.accentRed
-                          : AppColors.accentRed,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: AppDimens.p12, horizontal: AppDimens.p24),
+                child: Column(
+                  children: [
+                    AnimatedHeartButton(
+                      isSaved: vm.isCurrentAffirmationSaved(),
+                      transparent: true,
+                      onTap: () async {
+                        await vm.toggleSaveCurrentAffirmation();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                vm.isCurrentAffirmationSaved()
+                                    ? AppStrings.affirmationSaved
+                                    : AppStrings.affirmationRemoved,
+                              ),
+                              backgroundColor: AppColors.primary,
+                            ),
+                          );
+                        }
+                      },
                     ),
-                  ),
-                ],
+                    const SizedBox(height: AppDimens.p8),
+                    Text(
+                      AppStrings.save,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: vm.isCurrentAffirmationSaved()
+                            ? AppColors.accentRed
+                            : AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               _ActionButton(
-                icon: Icons.share,
+                icon: Icons.share_outlined,
                 label: AppStrings.share,
-                onTap: () async {
-                  await vm.copyCurrentAffirmation();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(AppStrings.affirmationCopied),
-                        backgroundColor: AppColors.primary,
-                      ),
-                    );
-                  }
+                onTap: () {
+                  Share.share(vm.currentAffirmation.text);
                 },
               ),
               _ActionButton(
@@ -230,6 +230,7 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
           ),
         ),
         const SizedBox(height: AppDimens.p32),
+        const SizedBox(height: AppDimens.p32),
       ],
     );
   }
@@ -250,17 +251,33 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppDimens.r12),
+      borderRadius: BorderRadius.circular(AppDimens.r16),
       child: Padding(
-        padding: const EdgeInsets.all(AppDimens.p12),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppDimens.p12, horizontal: AppDimens.p24),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.accentRed),
-            const SizedBox(height: AppDimens.p4),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: AppColors.accentRed, size: 24),
+            ),
+            const SizedBox(height: AppDimens.p8),
             Text(
               label,
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.accentRed,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
