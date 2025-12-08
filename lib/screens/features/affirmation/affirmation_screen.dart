@@ -200,8 +200,11 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
               _ActionButton(
                 icon: Icons.share_outlined,
                 label: AppStrings.share,
-                onTap: () {
-                  Share.share(vm.currentAffirmation.text);
+                onTap: () async {
+                  final text = vm.currentAffirmation?.text;
+                  if (text != null) {
+                    await Share.share(text);
+                  }
                 },
               ),
               _ActionButton(

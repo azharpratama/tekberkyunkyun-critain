@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
-import '../../../models/user_story.dart';
-import '../../../services/story_service.dart';
+import 'package:flutter/services.dart';
+import '../../../services/perpustakaan_cerita_service.dart';
 import '../../../core/theme/app_colors.dart';
 
+import '../../../models/user_story.dart';
+
 class WriteStoryScreen extends StatefulWidget {
-  const WriteStoryScreen({super.key});
+  final UserStory? story;
+
+  const WriteStoryScreen({super.key, this.story});
 
   @override
   State<WriteStoryScreen> createState() => _WriteStoryScreenState();
 }
 
-class _WriteStoryScreenState extends State<WriteStoryScreen>
-    with SingleTickerProviderStateMixin {
+class _WriteStoryScreenState extends State<WriteStoryScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
-  final _storyService = StoryService();
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+  final _service = PerpustakaanCeritaService();
 
   String _selectedCategory = 'Personal Story';
   bool _isPublishing = false;
+  int _contentLength = 0;
 
-  late AnimationController _animController;
-  late Animation<double> _fadeAnimation;
+  bool get _isEditing => widget.story != null;
 
   final List<String> _categories = [
     'Personal Story',
@@ -34,22 +37,27 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
   @override
   void initState() {
     super.initState();
-    _animController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeIn),
-    );
-    _animController.forward();
+    _titleController = TextEditingController(text: widget.story?.title);
+    _contentController = TextEditingController(text: widget.story?.content);
+    _contentLength = _contentController.text.length;
+
+    // Ensure selected category is valid
+    if (widget.story != null && _categories.contains(widget.story!.category)) {
+      _selectedCategory = widget.story!.category;
+    }
   }
 
   @override
   void dispose() {
-    _animController.dispose();
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  String calculateReadTime(String content) {
+    final wordCount = content.split(RegExp(r'\s+')).length;
+    final minutes = (wordCount / 200).ceil();
+    return '$minutes min read';
   }
 
   void _publishStory() async {
@@ -61,334 +69,184 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
       _isPublishing = true;
     });
 
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      if (_isEditing) {
+        await _service.updateStory(
+          storyId: widget.story!.id,
+          title: _titleController.text.trim(),
+          excerpt: _contentController.text.trim().length > 150
+              ? '${_contentController.text.trim().substring(0, 150)}...'
+              : _contentController.text.trim(),
+          content: _contentController.text.trim(),
+          category: _selectedCategory,
+          readTime: calculateReadTime(_contentController.text.trim()),
+        );
+      } else {
+        await _service.createStory(
+          title: _titleController.text.trim(),
+          excerpt: _contentController.text.trim().length > 150
+              ? '${_contentController.text.trim().substring(0, 150)}...'
+              : _contentController.text.trim(),
+          content: _contentController.text.trim(),
+          category: _selectedCategory,
+          readTime: calculateReadTime(_contentController.text.trim()),
+        );
+      }
 
-    final newStory = UserStory(
-      id: _storyService.generateStoryId(),
-      title: _titleController.text.trim(),
-      excerpt: _storyService.createExcerpt(_contentController.text.trim()),
-      content: _contentController.text.trim(),
-      authorName: 'You',
-      authorAvatar: 'assets/avatars/default.png',
-      date: _formatDate(DateTime.now()),
-      category: _selectedCategory,
-      readTime: _storyService.calculateReadTime(_contentController.text.trim()),
-      likesCount: 0,
-      commentsCount: 0,
-    );
+      if (mounted) {
+        setState(() {
+          _isPublishing = false;
+        });
 
-    _storyService.addStory(newStory);
-
-    if (mounted) {
-      setState(() {
-        _isPublishing = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 12),
-              Text('✨ Cerita berhasil dipublikasikan!'),
-            ],
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Text(_isEditing
+                    ? '✨ Cerita berhasil diperbarui!'
+                    : '✨ Cerita berhasil dipublikasikan!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
           ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-
-      Navigator.pop(context, true);
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isPublishing = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
-  }
-
-  String _formatDate(DateTime date) {
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final contentLength = _contentController.text.length;
-    final progress = (contentLength / 50).clamp(0.0, 1.0);
+    double progress = (_contentLength / 50).clamp(0.0, 1.0);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: Text(
+          _isEditing ? 'Edit Cerita' : 'Tulis Cerita',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.textPrimary,
         leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.close_rounded, color: Colors.grey[700], size: 20),
-          ),
-          onPressed: () {
-            if (_titleController.text.isNotEmpty ||
-                _contentController.text.isNotEmpty) {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  title: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.orange[50],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(Icons.warning_rounded,
-                            color: Colors.orange[700]),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text('Buang draft?'),
-                    ],
-                  ),
-                  content: const Text(
-                    'Cerita yang belum dipublikasikan akan hilang.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: Text(
-                        'Batal',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Buang'),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              Navigator.pop(context);
-            }
-          },
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Tulis Cerita',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: _isPublishing
-                ? const Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.primary),
-                      ),
-                    ),
-                  )
-                : ElevatedButton.icon(
-                    onPressed: _publishStory,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 2,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    icon: const Icon(Icons.publish_rounded, size: 18),
-                    label: const Text(
-                      'Publikasikan',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-          ),
-        ],
       ),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(24),
-            physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Category Selection with premium design
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.grey[50]!,
-                      Colors.white,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedCategory,
-                      isExpanded: true,
-                      icon: Icon(Icons.keyboard_arrow_down_rounded,
-                          color: AppColors.primary),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
-                      ),
-                      items: _categories.map((String category) {
-                        return DropdownMenuItem<String>(
-                          value: category,
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(category),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedCategory = newValue;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // Title Field with focus effect
+              // Title Field
               TextFormField(
                 controller: _titleController,
                 style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  height: 1.3,
-                  color: Colors.black87,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Judul cerita yang menarik...',
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.w700,
+                  labelText: 'Judul Cerita',
+                  hintText: 'Berikan judul yang menarik...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
                   ),
-                  border: InputBorder.none,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 12, top: 4),
-                    child: Icon(
-                      Icons.title_rounded,
-                      color: AppColors.primary,
-                      size: 28,
-                    ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.title_rounded),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
-                maxLines: null,
-                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '📝 Judul tidak boleh kosong';
-                  }
-                  if (value.trim().length < 5) {
-                    return '✏️ Judul minimal 5 karakter';
+                  if (value == null || value.isEmpty) {
+                    return 'Judul harus diisi';
                   }
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
 
-              Container(
-                height: 2,
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      AppColors.primary.withOpacity(0.3),
-                      Colors.transparent,
-                    ],
+              // Category Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
                   ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.category_rounded),
                 ),
+                items: _categories.map((String category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedCategory = newValue;
+                    });
+                  }
+                },
               ),
+              const SizedBox(height: 20),
 
               // Content Field
               TextFormField(
                 controller: _contentController,
-                style: const TextStyle(
-                  fontSize: 17,
-                  height: 1.8,
-                  color: Colors.black87,
-                ),
-                decoration: InputDecoration(
-                  hintText:
-                      'Ceritakan pengalaman, pemikiran, atau inspirasi kamu di sini...\n\nTulis dengan jujur dan autentik. Ceritamu mungkin bisa menginspirasi orang lain! ✨',
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    height: 1.6,
-                  ),
-                  border: InputBorder.none,
-                ),
                 maxLines: null,
                 minLines: 12,
                 textCapitalization: TextCapitalization.sentences,
+                style: const TextStyle(fontSize: 16, height: 1.5),
+                decoration: InputDecoration(
+                  labelText: 'Isi Cerita',
+                  hintText: 'Tuliskan ceritamu di sini...',
+                  alignLabelWithHint: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.all(20),
+                ),
                 onChanged: (value) {
-                  setState(() {});
+                  setState(() {
+                    _contentLength = value.trim().length;
+                  });
                 },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -400,7 +258,6 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                   return null;
                 },
               ),
-
               const SizedBox(height: 20),
 
               // Character Counter with Progress Bar
@@ -409,14 +266,14 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.05),
-                      AppColors.accentBlue.withOpacity(0.05),
+                      AppColors.primary.withValues(alpha: 0.05),
+                      AppColors.accentBlue.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: contentLength >= 50
-                        ? AppColors.primary.withOpacity(0.3)
+                    color: _contentLength >= 50
+                        ? AppColors.primary.withValues(alpha: 0.3)
                         : Colors.grey[300]!,
                   ),
                 ),
@@ -429,23 +286,23 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                         Row(
                           children: [
                             Icon(
-                              contentLength >= 50
+                              _contentLength >= 50
                                   ? Icons.check_circle_rounded
                                   : Icons.edit_rounded,
                               size: 18,
-                              color: contentLength >= 50
+                              color: _contentLength >= 50
                                   ? Colors.green
                                   : Colors.grey[600],
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              contentLength >= 50
+                              _contentLength >= 50
                                   ? 'Siap dipublikasikan!'
                                   : 'Terus menulis...',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: contentLength >= 50
+                                color: _contentLength >= 50
                                     ? Colors.green
                                     : Colors.grey[600],
                               ),
@@ -453,11 +310,11 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                           ],
                         ),
                         Text(
-                          '$contentLength karakter',
+                          '$_contentLength karakter',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
-                            color: contentLength >= 50
+                            color: _contentLength >= 50
                                 ? AppColors.primary
                                 : Colors.grey[600],
                           ),
@@ -471,7 +328,7 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                         value: progress,
                         backgroundColor: Colors.grey[200],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          contentLength >= 50
+                          _contentLength >= 50
                               ? Colors.green
                               : AppColors.primary,
                         ),
@@ -492,13 +349,13 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.primary.withOpacity(0.08),
-                      AppColors.accentBlue.withOpacity(0.08),
+                      AppColors.primary.withValues(alpha: 0.08),
+                      AppColors.accentBlue.withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     width: 1.5,
                   ),
                 ),
@@ -510,7 +367,7 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [
                                 AppColors.primary,
                                 AppColors.accentBlue,
@@ -561,6 +418,47 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
                 ),
               ),
 
+              const SizedBox(height: 32),
+
+              // Publish Button
+              ElevatedButton(
+                onPressed: _isPublishing ? null : _publishStory,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 5,
+                  shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                ),
+                child: _isPublishing
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.send_rounded),
+                          const SizedBox(width: 8),
+                          Text(
+                            _isEditing
+                                ? 'Simpan Perubahan'
+                                : 'Publikasikan Cerita',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
               const SizedBox(height: 40),
             ],
           ),
@@ -583,7 +481,7 @@ class _WriteStoryScreenState extends State<WriteStoryScreen>
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 16, color: color),

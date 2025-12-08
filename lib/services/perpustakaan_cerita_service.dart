@@ -3,18 +3,25 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class PerpustakaanCeritaService {
   final _supabase = Supabase.instance.client;
 
-  /// Fetch all published perpustakaan_cerita with counts
+  User? get currentUser => _supabase.auth.currentUser;
+
+  /// Fetch all published stories with author details
   Future<List<Map<String, dynamic>>> getStories({
     String? category,
     int limit = 20,
     int offset = 0,
   }) async {
     try {
-      var query = _supabase.from('perpustakaan_cerita_with_counts').select();
+      var query = _supabase
+          .from('perpustakaan_cerita')
+          .select('*, profiles(display_name, avatar_url)');
 
       if (category != null && category != 'All') {
         query = query.eq('category', category);
       }
+
+      // Filter only published stories if the column exists, otherwise assume all are public
+      // query = query.eq('is_published', true);
 
       final data = await query
           .order('created_at', ascending: false)
@@ -22,7 +29,7 @@ class PerpustakaanCeritaService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching perpustakaan_cerita: $e');
+      print('Error fetching stories: $e');
       return [];
     }
   }
@@ -31,8 +38,8 @@ class PerpustakaanCeritaService {
   Future<Map<String, dynamic>?> getStory(String storyId) async {
     try {
       final data = await _supabase
-          .from('perpustakaan_cerita_with_counts')
-          .select()
+          .from('perpustakaan_cerita')
+          .select('*, profiles(display_name, avatar_url)')
           .eq('id', storyId)
           .single();
 
@@ -178,14 +185,12 @@ class PerpustakaanCeritaService {
   /// Get comments for a story
   Future<List<Map<String, dynamic>>> getComments(String storyId) async {
     try {
-      final data =
-          await _supabase.from('perpustakaan_cerita_comments').select('''
-            *,
-            profiles:user_id (
-              display_name,
-              avatar_url
-            )
-          ''').eq('story_id', storyId).order('created_at', ascending: false);
+      // Need to join with profiles to get commenter details
+      final data = await _supabase
+          .from('perpustakaan_cerita_comments')
+          .select('*, profiles(display_name, avatar_url)')
+          .eq('story_id', storyId)
+          .order('created_at', ascending: false);
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
@@ -243,7 +248,7 @@ class PerpustakaanCeritaService {
     }
   }
 
-  /// Get user's own perpustakaan_cerita
+  /// Get user's own stories
   Future<List<Map<String, dynamic>>> getMyStories() async {
     try {
       final userId = _supabase.auth.currentUser?.id;
@@ -251,7 +256,7 @@ class PerpustakaanCeritaService {
 
       final data = await _supabase
           .from('perpustakaan_cerita')
-          .select()
+          .select('*, profiles(display_name, avatar_url)')
           .eq('author_id', userId)
           .order('created_at', ascending: false);
 
@@ -259,6 +264,59 @@ class PerpustakaanCeritaService {
     } catch (e) {
       print('Error fetching my stories: $e');
       return [];
+    }
+  }
+
+  /// Bookmark a story
+  Future<void> bookmarkStory(String storyId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('User not authenticated');
+
+      await _supabase.from('perpustakaan_cerita_bookmarks').insert({
+        'story_id': storyId,
+        'user_id': userId,
+      });
+    } catch (e) {
+      print('Error bookmarking story: $e');
+      rethrow;
+    }
+  }
+
+  /// Unbookmark a story
+  Future<void> unbookmarkStory(String storyId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('User not authenticated');
+
+      await _supabase
+          .from('perpustakaan_cerita_bookmarks')
+          .delete()
+          .eq('story_id', storyId)
+          .eq('user_id', userId);
+    } catch (e) {
+      print('Error unbookmarking story: $e');
+      rethrow;
+    }
+  }
+
+  /// Check if user has bookmarked a story
+  Future<bool> hasBookmarkedStory(String storyId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      final data = await _supabase
+          .from('perpustakaan_cerita_bookmarks')
+          .select()
+          .eq('story_id', storyId)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      return data != null;
+    } catch (e) {
+      print('Error checking bookmark status: $e');
+      return false;
     }
   }
 }

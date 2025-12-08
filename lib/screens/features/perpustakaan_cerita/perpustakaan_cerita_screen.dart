@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/user_story.dart';
-import '../../../data/stories_data.dart';
+import '../../../services/perpustakaan_cerita_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/explore/story_card.dart';
@@ -16,7 +16,11 @@ class PerpustakaanCeritaScreen extends StatefulWidget {
 
 class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
     with SingleTickerProviderStateMixin {
+  final PerpustakaanCeritaService _service = PerpustakaanCeritaService();
+  List<UserStory> _stories = [];
+  bool _isLoading = true;
   String _selectedCategory = 'All';
+
   final List<String> _categories = [
     'All',
     'Kesehatan Mental',
@@ -33,6 +37,8 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
   @override
   void initState() {
     super.initState();
+    _fetchStories();
+
     _fabController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
@@ -53,15 +59,31 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
     );
   }
 
+  Future<void> _fetchStories() async {
+    setState(() => _isLoading = true);
+    try {
+      final data = await _service.getStories(category: _selectedCategory);
+      setState(() {
+        _stories = data.map((json) => UserStory.fromJson(json)).toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading stories: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _onCategorySelected(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+    _fetchStories();
+  }
+
   @override
   void dispose() {
     _fabController.dispose();
     super.dispose();
-  }
-
-  List<UserStory> get _filteredStories {
-    if (_selectedCategory == 'All') return userStories;
-    return userStories.where((s) => s.category == _selectedCategory).toList();
   }
 
   @override
@@ -80,7 +102,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.primary,
-                    AppColors.primary.withOpacity(0.8),
+                    AppColors.primary.withValues(alpha: 0.8),
                     AppColors.accentBlue,
                   ],
                 ),
@@ -90,7 +112,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -108,7 +130,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: const Icon(
@@ -132,9 +154,9 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${_filteredStories.length} cerita inspiratif',
+                                  '${_stories.length} cerita inspiratif',
                                   style: AppTextStyles.bodyMedium.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -156,7 +178,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -206,51 +228,58 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
             ),
           ),
 
-          // Story List
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-            sliver: _filteredStories.isEmpty
-                ? SliverToBoxAdapter(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 60),
-                          Icon(
-                            Icons.auto_stories_outlined,
-                            size: 80,
-                            color: Colors.grey[300],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Belum ada cerita',
-                            style: AppTextStyles.h3.copyWith(
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Jadilah yang pertama berbagi cerita!',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final story = _filteredStories[index];
-                        return StoryCard(
-                          story: story,
-                          index: index,
-                        );
-                      },
-                      childCount: _filteredStories.length,
+          // Story List with Loading State
+          _isLoading
+              ? SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
                     ),
                   ),
+                )
+              : _stories.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.auto_stories_outlined,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Belum ada cerita di kategori ini',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final story = _stories[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: StoryCard(
+                              story: story,
+                              index: index,
+                            ),
+                          );
+                        },
+                        childCount: _stories.length,
+                      ),
+                    ),
+
+          SliverPadding(
+            padding: const EdgeInsets.only(bottom: 100),
           ),
         ],
       ),
@@ -266,7 +295,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.4),
+                    color: AppColors.primary.withValues(alpha: 0.4),
                     blurRadius: _fabPulseAnimation.value + 15,
                     spreadRadius: _fabPulseAnimation.value / 2,
                   ),
@@ -296,7 +325,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                   );
 
                   if (result == true && mounted) {
-                    setState(() {});
+                    _fetchStories(); // Refresh stories on return
                   }
                 },
                 backgroundColor: AppColors.primary,
@@ -304,7 +333,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
                 icon: Container(
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -330,11 +359,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
 
   Widget _buildCategoryChip(String category, bool isSelected) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedCategory = category;
-        });
-      },
+      onTap: () => _onCategorySelected(category),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -344,20 +369,21 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
               ? LinearGradient(
                   colors: [
                     Colors.white,
-                    Colors.white.withOpacity(0.95),
+                    Colors.white.withValues(alpha: 0.95),
                   ],
                 )
               : null,
-          color: isSelected ? null : Colors.white.withOpacity(0.25),
+          color: isSelected ? null : Colors.white.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isSelected ? Colors.white : Colors.white.withOpacity(0.3),
+            color:
+                isSelected ? Colors.white : Colors.white.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

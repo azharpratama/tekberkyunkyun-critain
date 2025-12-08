@@ -80,7 +80,7 @@ class _StoryCardState extends State<StoryCard>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
                 spreadRadius: 0,
@@ -134,8 +134,9 @@ class _StoryCardState extends State<StoryCard>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      AppColors.primary.withOpacity(0.3),
-                                      AppColors.accentBlue.withOpacity(0.3),
+                                      AppColors.primary.withValues(alpha: 0.3),
+                                      AppColors.accentBlue
+                                          .withValues(alpha: 0.3),
                                     ],
                                   ),
                                 ),
@@ -162,7 +163,7 @@ class _StoryCardState extends State<StoryCard>
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withOpacity(0.7),
+                                    Colors.black.withValues(alpha: 0.7),
                                   ],
                                 ),
                               ),
@@ -178,11 +179,11 @@ class _StoryCardState extends State<StoryCard>
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.95),
+                                color: Colors.white.withValues(alpha: 0.95),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -220,13 +221,15 @@ class _StoryCardState extends State<StoryCard>
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      AppColors.primary.withOpacity(0.1),
-                                      AppColors.accentBlue.withOpacity(0.1),
+                                      AppColors.primary.withValues(alpha: 0.1),
+                                      AppColors.accentBlue
+                                          .withValues(alpha: 0.1),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: AppColors.primary.withOpacity(0.3),
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),

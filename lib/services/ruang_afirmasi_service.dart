@@ -25,11 +25,11 @@ class RuangAfirmasiService {
   /// Get random affirmation
   Future<Map<String, dynamic>?> getRandomAffirmation() async {
     try {
-      final ruang_afirmasi = await getAffirmations();
-      if (ruang_afirmasi.isEmpty) return null;
+      final ruangAfirmasi = await getAffirmations();
+      if (ruangAfirmasi.isEmpty) return null;
 
-      ruang_afirmasi.shuffle();
-      return ruang_afirmasi.first;
+      ruangAfirmasi.shuffle();
+      return ruangAfirmasi.first;
     } catch (e) {
       print('Error fetching random affirmation: $e');
       return null;

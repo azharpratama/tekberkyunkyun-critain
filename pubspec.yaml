@@ -13,6 +13,9 @@ dependencies:
 
   # State Management
   provider: ^6.1.5+1
+  flutter_web_plugins:
+    sdk: flutter
+
 
   # Backend
   supabase_flutter: ^2.10.3
