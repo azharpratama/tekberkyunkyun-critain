@@ -1,28 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../viewmodels/story_viewmodel.dart';
-import '../../../../widgets/ruang_bercerita/intro_views.dart';
-import '../../../../widgets/ruang_bercerita/loading_views.dart';
-import '../../../../widgets/ruang_bercerita/chat_views.dart';
+
+import '../../../viewmodels/ruang_bercerita_viewmodel.dart';
+import '../../../widgets/ruang_bercerita/intro_views.dart';
+import '../../../widgets/ruang_bercerita/loading_views.dart';
+import '../../../widgets/ruang_bercerita/chat_views.dart';
 import '../../../../models/user_stats.dart';
 
-class StoryScreen extends StatefulWidget {
-  const StoryScreen({super.key});
+class RuangBerceritaScreen extends StatefulWidget {
+  const RuangBerceritaScreen({super.key});
 
   @override
-  State<StoryScreen> createState() => _StoryScreenState();
+  State<RuangBerceritaScreen> createState() => _RuangBerceritaScreenState();
 }
 
-class _StoryScreenState extends State<StoryScreen>
+class _RuangBerceritaScreenState extends State<RuangBerceritaScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => RuangBerceritaViewModel(),
+      child: const _RuangBerceritaContent(),
+    );
+  }
+}
+
+class _RuangBerceritaContent extends StatefulWidget {
+  const _RuangBerceritaContent();
+
+  @override
+  State<_RuangBerceritaContent> createState() => _RuangBerceritaContentState();
+}
+
+class _RuangBerceritaContentState extends State<_RuangBerceritaContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late StoryViewModel _viewModel;
+  late RuangBerceritaViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
+    _viewModel = Provider.of<RuangBerceritaViewModel>(context, listen: false);
     _tabController = TabController(length: 2, vsync: this);
-    _viewModel = StoryViewModel();
 
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -43,7 +61,7 @@ class _StoryScreenState extends State<StoryScreen>
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: _viewModel,
-      child: Consumer<StoryViewModel>(
+      child: Consumer<RuangBerceritaViewModel>(
         builder: (context, vm, child) {
           return Scaffold(
             backgroundColor: const Color(0xFFF5F5F5),
@@ -103,7 +121,7 @@ class _SpeakerMode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<StoryViewModel>();
+    final vm = context.watch<RuangBerceritaViewModel>();
 
     if (vm.currentStep == 0) {
       return IntroView(onStart: vm.startSession);
@@ -137,7 +155,7 @@ class _ListenerMode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<StoryViewModel>();
+    final vm = context.watch<RuangBerceritaViewModel>();
 
     if (vm.currentStep == 0) {
       return ListenerIntroView(onStart: vm.startSession);
@@ -152,7 +170,7 @@ class _ListenerMode extends StatelessWidget {
 }
 
 // Helper function to show dialog (duplicated for now to avoid complex passing)
-void _showEndSessionDialog(BuildContext context, StoryViewModel vm) {
+void _showEndSessionDialog(BuildContext context, RuangBerceritaViewModel vm) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -177,7 +195,7 @@ void _showEndSessionDialog(BuildContext context, StoryViewModel vm) {
   );
 }
 
-void _showRewardDialog(BuildContext context, StoryViewModel vm) {
+void _showRewardDialog(BuildContext context, RuangBerceritaViewModel vm) {
   final stats = UserStatsService.currentStats;
   final isSpeaker = vm.isSpeakerMode;
   final points = vm.rewardPoints;

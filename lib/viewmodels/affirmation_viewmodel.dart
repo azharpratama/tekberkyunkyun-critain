@@ -2,9 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/affirmations.dart';
-import '../services/saved_affirmations_service.dart';
+import '../services/ruang_afirmasi_service.dart';
 
 class AffirmationViewModel extends ChangeNotifier {
+  final _afirmasiService = RuangAfirmasiService();
+
   // Tab State
   int _currentTabIndex = 0;
   int get currentTabIndex => _currentTabIndex;
@@ -15,43 +17,123 @@ class AffirmationViewModel extends ChangeNotifier {
   }
 
   // Receive Affirmation State
-  final List<Affirmation> _affirmations = defaultAffirmations;
+  List<Map<String, dynamic>> _affirmationsData = [];
+  List<Affirmation> _affirmations = [];
+  Set<String> _savedAffirmationIds = {};
   int _currentAffirmationIndex = 0;
+  bool _isLoading = true;
+  String? _errorMessage;
 
   List<Affirmation> get affirmations => _affirmations;
   int get currentAffirmationIndex => _currentAffirmationIndex;
-  Affirmation get currentAffirmation => _affirmations[_currentAffirmationIndex];
+  Affirmation? get currentAffirmation =>
+      _affirmations.isNotEmpty ? _affirmations[_currentAffirmationIndex] : null;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  AffirmationViewModel() {
+    loadAffirmations();
+  }
+
+  Future<void> loadAffirmations() async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      final data = await _afirmasiService.getAffirmations();
+      _affirmationsData = data;
+      _savedAffirmationIds = await _afirmasiService.getSavedAffirmationIds();
+
+      if (data.isEmpty) {
+        // Fallback to default affirmations if database is empty
+        _affirmations = defaultAffirmations;
+      } else {
+        // Convert Supabase data to Affirmation objects
+        _affirmations = data.map((item) {
+          return Affirmation(
+            text: item['content'] as String,
+            color: _getCategoryColor(item['category'] as String),
+          );
+        }).toList();
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Gagal memuat afirmasi: $e';
+      _affirmations = defaultAffirmations; // Fallback to defaults
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'self-love':
+        return Colors.pink[100]!;
+      case 'motivation':
+        return Colors.orange[100]!;
+      case 'self-acceptance':
+        return Colors.blue[100]!;
+      case 'support':
+        return Colors.green[100]!;
+      case 'hope':
+        return Colors.purple[100]!;
+      default:
+        return Colors.amber[100]!;
+    }
+  }
 
   void setAffirmationIndex(int index) {
+    if (_affirmations.isEmpty) return;
     _currentAffirmationIndex = index % _affirmations.length;
     notifyListeners();
   }
 
   void shuffleAffirmation() {
+    if (_affirmations.isEmpty) return;
     final random = Random();
     final newIndex = random.nextInt(_affirmations.length);
-    // Ensure we jump to a new page effectively if using PageView logic externally
-    // But for VM state, just setting the index is enough.
-    // The View might need to handle the animation controller logic.
     _currentAffirmationIndex = newIndex;
     notifyListeners();
   }
 
-  bool isCurrentAffirmationSaved() {
-    return SavedAffirmationsService.isSaved(currentAffirmation.text);
+  String? _getCurrentAffirmationId() {
+    if (_affirmationsData.isEmpty ||
+        _currentAffirmationIndex >= _affirmationsData.length) {
+      return null;
+    }
+    return _affirmationsData[_currentAffirmationIndex]['id'] as String?;
   }
 
-  void toggleSaveCurrentAffirmation() {
-    if (isCurrentAffirmationSaved()) {
-      SavedAffirmationsService.removeAffirmation(currentAffirmation.text);
-    } else {
-      SavedAffirmationsService.saveAffirmation(currentAffirmation.text);
+  bool isCurrentAffirmationSaved() {
+    final id = _getCurrentAffirmationId();
+    if (id == null) return false;
+    return _savedAffirmationIds.contains(id);
+  }
+
+  Future<void> toggleSaveCurrentAffirmation() async {
+    final id = _getCurrentAffirmationId();
+    if (id == null) return;
+
+    try {
+      if (isCurrentAffirmationSaved()) {
+        await _afirmasiService.unsaveAffirmation(id);
+        _savedAffirmationIds.remove(id);
+      } else {
+        await _afirmasiService.saveAffirmation(id);
+        _savedAffirmationIds.add(id);
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error toggling save: $e');
     }
-    notifyListeners();
   }
 
   Future<void> copyCurrentAffirmation() async {
-    await Clipboard.setData(ClipboardData(text: currentAffirmation.text));
+    if (currentAffirmation == null) return;
+    await Clipboard.setData(ClipboardData(text: currentAffirmation!.text));
   }
 
   // Send Affirmation State
@@ -77,5 +159,27 @@ class AffirmationViewModel extends ChangeNotifier {
 
   bool canSend() {
     return _messageText.trim().isNotEmpty;
+  }
+
+  /// Send affirmation to database
+  Future<bool> sendAffirmation() async {
+    if (!canSend()) return false;
+
+    try {
+      final success = await _afirmasiService.createAffirmation(
+        content: _messageText.trim(),
+      );
+
+      if (success) {
+        clearMessage();
+        // Reload affirmations to include the new one
+        await loadAffirmations();
+      }
+
+      return success;
+    } catch (e) {
+      print('Error sending affirmation: $e');
+      return false;
+    }
   }
 }
