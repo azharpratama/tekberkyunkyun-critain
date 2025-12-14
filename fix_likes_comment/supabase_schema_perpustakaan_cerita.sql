@@ -123,7 +123,7 @@ CREATE POLICY "Authors can delete own stories"
 -- ============================================
 -- 4. STORY LIKES TABLE
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.story_likes (
+CREATE TABLE IF NOT EXISTS public.perpustakaan_cerita_likes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     story_id UUID REFERENCES public.stories(id) ON DELETE CASCADE NOT NULL,
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
@@ -134,31 +134,31 @@ CREATE TABLE IF NOT EXISTS public.story_likes (
 );
 
 -- Create index
-CREATE INDEX idx_story_likes_story ON public.story_likes(story_id);
-CREATE INDEX idx_story_likes_user ON public.story_likes(user_id);
+CREATE INDEX idx_story_likes_story ON public.perpustakaan_cerita_likes(story_id);
+CREATE INDEX idx_story_likes_user ON public.perpustakaan_cerita_likes(user_id);
 
 -- Enable RLS
-ALTER TABLE public.story_likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.perpustakaan_cerita_likes ENABLE ROW LEVEL SECURITY;
 
 -- Users can view all likes
 CREATE POLICY "Anyone can view likes"
-    ON public.story_likes FOR SELECT
+    ON public.perpustakaan_cerita_likes FOR SELECT
     USING (true);
 
 -- Authenticated users can like stories
 CREATE POLICY "Authenticated users can like stories"
-    ON public.story_likes FOR INSERT
+    ON public.perpustakaan_cerita_likes FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
 -- Users can remove their own likes
 CREATE POLICY "Users can remove own likes"
-    ON public.story_likes FOR DELETE
+    ON public.perpustakaan_cerita_likes FOR DELETE
     USING (auth.uid() = user_id);
 
 -- ============================================
 -- 5. STORY BOOKMARKS TABLE
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.story_bookmarks (
+CREATE TABLE IF NOT EXISTS public.perpustakaan_cerita_bookmarks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     story_id UUID REFERENCES public.stories(id) ON DELETE CASCADE NOT NULL,
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
@@ -169,31 +169,31 @@ CREATE TABLE IF NOT EXISTS public.story_bookmarks (
 );
 
 -- Create index
-CREATE INDEX idx_story_bookmarks_story ON public.story_bookmarks(story_id);
-CREATE INDEX idx_story_bookmarks_user ON public.story_bookmarks(user_id);
+CREATE INDEX idx_story_bookmarks_story ON public.perpustakaan_cerita_bookmarks(story_id);
+CREATE INDEX idx_story_bookmarks_user ON public.perpustakaan_cerita_bookmarks(user_id);
 
 -- Enable RLS
-ALTER TABLE public.story_bookmarks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.perpustakaan_cerita_bookmarks ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own bookmarks
 CREATE POLICY "Users can view own bookmarks"
-    ON public.story_bookmarks FOR SELECT
+    ON public.perpustakaan_cerita_bookmarks FOR SELECT
     USING (auth.uid() = user_id);
 
 -- Authenticated users can bookmark stories
 CREATE POLICY "Authenticated users can bookmark stories"
-    ON public.story_bookmarks FOR INSERT
+    ON public.perpustakaan_cerita_bookmarks FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
 -- Users can remove their own bookmarks
 CREATE POLICY "Users can remove own bookmarks"
-    ON public.story_bookmarks FOR DELETE
+    ON public.perpustakaan_cerita_bookmarks FOR DELETE
     USING (auth.uid() = user_id);
 
 -- ============================================
 -- 6. STORY COMMENTS TABLE
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.story_comments (
+CREATE TABLE IF NOT EXISTS public.perpustakaan_cerita_comments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     story_id UUID REFERENCES public.stories(id) ON DELETE CASCADE NOT NULL,
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
@@ -206,16 +206,16 @@ CREATE TABLE IF NOT EXISTS public.story_comments (
 );
 
 -- Create indexes
-CREATE INDEX idx_story_comments_story ON public.story_comments(story_id);
-CREATE INDEX idx_story_comments_user ON public.story_comments(user_id);
-CREATE INDEX idx_story_comments_parent ON public.story_comments(parent_comment_id);
+CREATE INDEX idx_story_comments_story ON public.perpustakaan_cerita_comments(story_id);
+CREATE INDEX idx_story_comments_user ON public.perpustakaan_cerita_comments(user_id);
+CREATE INDEX idx_story_comments_parent ON public.perpustakaan_cerita_comments(parent_comment_id);
 
 -- Enable RLS
-ALTER TABLE public.story_comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.perpustakaan_cerita_comments ENABLE ROW LEVEL SECURITY;
 
 -- Anyone can read comments on published stories
 CREATE POLICY "Anyone can view comments"
-    ON public.story_comments FOR SELECT
+    ON public.perpustakaan_cerita_comments FOR SELECT
     USING (
         EXISTS (
             SELECT 1 FROM public.stories
@@ -225,17 +225,17 @@ CREATE POLICY "Anyone can view comments"
 
 -- Authenticated users can create comments
 CREATE POLICY "Authenticated users can create comments"
-    ON public.story_comments FOR INSERT
+    ON public.perpustakaan_cerita_comments FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
 -- Users can update their own comments
 CREATE POLICY "Users can update own comments"
-    ON public.story_comments FOR UPDATE
+    ON public.perpustakaan_cerita_comments FOR UPDATE
     USING (auth.uid() = user_id);
 
 -- Users can delete their own comments
 CREATE POLICY "Users can delete own comments"
-    ON public.story_comments FOR DELETE
+    ON public.perpustakaan_cerita_comments FOR DELETE
     USING (auth.uid() = user_id);
 
 -- ============================================
@@ -293,7 +293,7 @@ $$ LANGUAGE plpgsql;
 
 -- Trigger for likes count
 CREATE TRIGGER trigger_update_story_likes_count
-    AFTER INSERT OR DELETE ON public.story_likes
+    AFTER INSERT OR DELETE ON public.perpustakaan_cerita_likes
     FOR EACH ROW
     EXECUTE FUNCTION update_story_likes_count();
 
@@ -317,7 +317,7 @@ $$ LANGUAGE plpgsql;
 
 -- Trigger for comments count
 CREATE TRIGGER trigger_update_story_comments_count
-    AFTER INSERT OR DELETE ON public.story_comments
+    AFTER INSERT OR DELETE ON public.perpustakaan_cerita_comments
     FOR EACH ROW
     EXECUTE FUNCTION update_story_comments_count();
 
