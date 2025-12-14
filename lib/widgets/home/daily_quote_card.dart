@@ -80,11 +80,12 @@ class _DailyQuoteCardState extends State<DailyQuoteCard> {
           children: [
             Row(
               children: [
-                Icon(Icons.format_quote, color: Colors.white.withOpacity(0.8)),
+                Icon(Icons.format_quote,
+                    color: Colors.white.withValues(alpha: 0.8)),
                 const SizedBox(width: 8),
                 Text('Quote Hari Ini',
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontWeight: FontWeight.bold)),
               ],
             ),
@@ -105,7 +106,7 @@ class _DailyQuoteCardState extends State<DailyQuoteCard> {
               child: Text(
                 quote.author,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -120,10 +121,10 @@ class _DailyQuoteCardState extends State<DailyQuoteCard> {
   Widget _buildEmptyBox() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.background.withOpacity(0.5),
+        color: AppColors.background.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.textSecondary.withOpacity(0.5),
+          color: AppColors.textSecondary.withValues(alpha: 0.5),
           // FIX: Menggunakan solid dan width tipis sebagai pengganti dashed
           style: BorderStyle.solid,
           width: 1,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -32,7 +33,7 @@ class StorageService {
           _supabase.storage.from('avatars').getPublicUrl(filePath);
       return publicUrl;
     } catch (e) {
-      print('Error uploading avatar: $e');
+      debugPrint('Error uploading avatar: $e');
       return null;
     }
   }
@@ -50,7 +51,7 @@ class StorageService {
         await _supabase.storage.from('avatars').remove(filePaths);
       }
     } catch (e) {
-      print('Error deleting avatar: $e');
+      debugPrint('Error deleting avatar: $e');
     }
   }
 
@@ -77,7 +78,7 @@ class StorageService {
           _supabase.storage.from('story-covers').getPublicUrl(filePath);
       return publicUrl;
     } catch (e) {
-      print('Error uploading story cover: $e');
+      debugPrint('Error uploading story cover: $e');
       return null;
     }
   }
@@ -100,7 +101,7 @@ class StorageService {
           .from('story-covers')
           .remove(['$userId/${coverFile.name}']);
     } catch (e) {
-      print('Error deleting story cover: $e');
+      debugPrint('Error deleting story cover: $e');
     }
   }
 

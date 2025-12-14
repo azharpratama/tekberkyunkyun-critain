@@ -82,10 +82,12 @@ class _StoryDetailScreenState extends State<StoryDetailScreen>
         await _service.likeStory(widget.story.id);
       }
     } catch (e) {
-      if (mounted) setState(() => _isLiked = previousState);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengubah like: $e')),
-      );
+      if (mounted) {
+        setState(() => _isLiked = previousState);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal mengubah like: $e')),
+        );
+      }
     }
   }
 
@@ -102,10 +104,12 @@ class _StoryDetailScreenState extends State<StoryDetailScreen>
         await _service.bookmarkStory(widget.story.id);
       }
     } catch (e) {
-      if (mounted) setState(() => _isBookmarked = previousState);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengubah bookmark: $e')),
-      );
+      if (mounted) {
+        setState(() => _isBookmarked = previousState);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal mengubah bookmark: $e')),
+        );
+      }
     }
   }
 
@@ -169,7 +173,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen>
                               WriteStoryScreen(story: widget.story),
                         ),
                       );
-                      if (result == true) {
+                      if (result == true && context.mounted) {
                         Navigator.pop(context, true); // Refresh list
                       }
                     } else if (value == 'delete') {
@@ -653,18 +657,18 @@ class _StoryDetailScreenState extends State<StoryDetailScreen>
   void _showDeleteConfirmation() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Hapus Cerita?'),
         content: const Text(
             'Apakah Anda yakin ingin menghapus cerita ini? Tindakan ini tidak dapat dibatalkan.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Batal'),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context); // Close dialog
+              Navigator.pop(dialogContext); // Close dialog
               try {
                 await _service.deleteStory(widget.story.id);
                 if (mounted) {

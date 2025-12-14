@@ -203,6 +203,7 @@ class _ReceiveAffirmationTabState extends State<_ReceiveAffirmationTab> {
                 onTap: () async {
                   final text = vm.currentAffirmation?.text;
                   if (text != null) {
+                    // ignore: deprecated_member_use
                     await Share.share(text);
                   }
                 },

@@ -68,7 +68,7 @@ class _PerpustakaanCeritaScreenState extends State<PerpustakaanCeritaScreen>
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading stories: $e');
+      debugPrint('Error loading stories: $e');
       setState(() => _isLoading = false);
     }
   }

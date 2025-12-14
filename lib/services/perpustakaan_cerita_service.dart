@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class PerpustakaanCeritaService {
   final _supabase = Supabase.instance.client;
@@ -29,7 +30,7 @@ class PerpustakaanCeritaService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching stories: $e');
+      debugPrint('Error fetching stories: $e');
       return [];
     }
   }
@@ -45,7 +46,7 @@ class PerpustakaanCeritaService {
 
       return data;
     } catch (e) {
-      print('Error fetching story: $e');
+      debugPrint('Error fetching story: $e');
       return null;
     }
   }
@@ -80,7 +81,7 @@ class PerpustakaanCeritaService {
 
       return response['id'] as String;
     } catch (e) {
-      print('Error creating story: $e');
+      debugPrint('Error creating story: $e');
       return null;
     }
   }
@@ -114,7 +115,7 @@ class PerpustakaanCeritaService {
           .update(updates)
           .eq('id', storyId);
     } catch (e) {
-      print('Error updating story: $e');
+      debugPrint('Error updating story: $e');
       rethrow;
     }
   }
@@ -124,7 +125,7 @@ class PerpustakaanCeritaService {
     try {
       await _supabase.from('perpustakaan_cerita').delete().eq('id', storyId);
     } catch (e) {
-      print('Error deleting story: $e');
+      debugPrint('Error deleting story: $e');
       rethrow;
     }
   }
@@ -140,7 +141,7 @@ class PerpustakaanCeritaService {
         'user_id': userId,
       });
     } catch (e) {
-      print('Error liking story: $e');
+      debugPrint('Error liking story: $e');
       rethrow;
     }
   }
@@ -157,7 +158,7 @@ class PerpustakaanCeritaService {
           .eq('story_id', storyId)
           .eq('user_id', userId);
     } catch (e) {
-      print('Error unliking story: $e');
+      debugPrint('Error unliking story: $e');
       rethrow;
     }
   }
@@ -177,7 +178,7 @@ class PerpustakaanCeritaService {
 
       return data != null;
     } catch (e) {
-      print('Error checking like status: $e');
+      debugPrint('Error checking like status: $e');
       return false;
     }
   }
@@ -194,7 +195,7 @@ class PerpustakaanCeritaService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching comments: $e');
+      debugPrint('Error fetching comments: $e');
       return [];
     }
   }
@@ -214,7 +215,7 @@ class PerpustakaanCeritaService {
         'content': content,
       });
     } catch (e) {
-      print('Error adding comment: $e');
+      debugPrint('Error adding comment: $e');
       rethrow;
     }
   }
@@ -230,7 +231,7 @@ class PerpustakaanCeritaService {
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', commentId);
     } catch (e) {
-      print('Error updating comment: $e');
+      debugPrint('Error updating comment: $e');
       rethrow;
     }
   }
@@ -243,7 +244,7 @@ class PerpustakaanCeritaService {
           .delete()
           .eq('id', commentId);
     } catch (e) {
-      print('Error deleting comment: $e');
+      debugPrint('Error deleting comment: $e');
       rethrow;
     }
   }
@@ -262,7 +263,7 @@ class PerpustakaanCeritaService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching my stories: $e');
+      debugPrint('Error fetching my stories: $e');
       return [];
     }
   }
@@ -278,7 +279,7 @@ class PerpustakaanCeritaService {
         'user_id': userId,
       });
     } catch (e) {
-      print('Error bookmarking story: $e');
+      debugPrint('Error bookmarking story: $e');
       rethrow;
     }
   }
@@ -295,7 +296,7 @@ class PerpustakaanCeritaService {
           .eq('story_id', storyId)
           .eq('user_id', userId);
     } catch (e) {
-      print('Error unbookmarking story: $e');
+      debugPrint('Error unbookmarking story: $e');
       rethrow;
     }
   }
@@ -315,7 +316,7 @@ class PerpustakaanCeritaService {
 
       return data != null;
     } catch (e) {
-      print('Error checking bookmark status: $e');
+      debugPrint('Error checking bookmark status: $e');
       return false;
     }
   }

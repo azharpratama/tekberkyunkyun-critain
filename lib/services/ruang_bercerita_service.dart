@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 class RuangBerceritaService {
   final _supabase = Supabase.instance.client;
@@ -16,7 +17,7 @@ class RuangBerceritaService {
         'status': 'waiting',
       });
     } catch (e) {
-      print('Error joining queue: $e');
+      debugPrint('Error joining queue: $e');
       rethrow;
     }
   }
@@ -32,7 +33,7 @@ class RuangBerceritaService {
           .delete()
           .eq('user_id', userId);
     } catch (e) {
-      print('Error leaving queue: $e');
+      debugPrint('Error leaving queue: $e');
     }
   }
 
@@ -50,7 +51,7 @@ class RuangBerceritaService {
 
       return data;
     } catch (e) {
-      print('Error checking queue: $e');
+      debugPrint('Error checking queue: $e');
       return null;
     }
   }
@@ -61,7 +62,7 @@ class RuangBerceritaService {
       final result = await _supabase.rpc('match_users').maybeSingle();
       return result;
     } catch (e) {
-      print('Error matching users: $e');
+      debugPrint('Error matching users: $e');
       return null;
     }
   }
@@ -81,7 +82,7 @@ class RuangBerceritaService {
 
       return data;
     } catch (e) {
-      print('Error fetching active session: $e');
+      debugPrint('Error fetching active session: $e');
       return null;
     }
   }
@@ -103,7 +104,7 @@ class RuangBerceritaService {
         'is_system_message': isSystemMessage,
       });
     } catch (e) {
-      print('Error sending message: $e');
+      debugPrint('Error sending message: $e');
       rethrow;
     }
   }
@@ -119,7 +120,7 @@ class RuangBerceritaService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching messages: $e');
+      debugPrint('Error fetching messages: $e');
       return [];
     }
   }
@@ -169,7 +170,7 @@ class RuangBerceritaService {
           .update(updates)
           .eq('id', sessionId);
     } catch (e) {
-      print('Error ending session: $e');
+      debugPrint('Error ending session: $e');
       rethrow;
     }
   }

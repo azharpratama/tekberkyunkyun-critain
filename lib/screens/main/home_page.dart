@@ -10,7 +10,7 @@ import '../features/profile/profile_screen.dart';
 import 'dart:math' as math;
 
 // Konstanta untuk Background Asset
-const String _BACKGROUND_ASSET = 'assets/maps_background.png';
+const String _backgroundAsset = 'assets/maps_background.png';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
             child: Transform.rotate(
               angle: math.pi,
               child: Image.asset(
-                _BACKGROUND_ASSET,
+                _backgroundAsset,
                 fit: BoxFit.cover,
               ),
             ),
@@ -162,7 +162,7 @@ class _HomeContent extends StatelessWidget {
               width: containerSize,
               height: containerSize,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: AppColors.primary, size: iconSize),
@@ -198,7 +198,7 @@ class _HomeContent extends StatelessWidget {
               children: [
                 Container(
                   height: virtualHeaderHeight,
-                  color: AppColors.primary.withOpacity(0.05),
+                  color: AppColors.primary.withValues(alpha: 0.05),
                 ),
                 Positioned(
                   top: virtualHeaderHeight - 80.0,

@@ -127,7 +127,7 @@ class AffirmationViewModel extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print('Error toggling save: $e');
+      debugPrint('Error toggling save: $e');
     }
   }
 
@@ -178,7 +178,7 @@ class AffirmationViewModel extends ChangeNotifier {
 
       return success;
     } catch (e) {
-      print('Error sending affirmation: $e');
+      debugPrint('Error sending affirmation: $e');
       return false;
     }
   }

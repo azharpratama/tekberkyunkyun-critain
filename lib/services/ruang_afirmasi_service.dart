@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class RuangAfirmasiService {
   final _supabase = Supabase.instance.client;
@@ -17,7 +18,7 @@ class RuangAfirmasiService {
       final data = await query.order('created_at', ascending: false);
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching ruang_afirmasi: $e');
+      debugPrint('Error fetching ruang_afirmasi: $e');
       return [];
     }
   }
@@ -31,7 +32,7 @@ class RuangAfirmasiService {
       ruangAfirmasi.shuffle();
       return ruangAfirmasi.first;
     } catch (e) {
-      print('Error fetching random affirmation: $e');
+      debugPrint('Error fetching random affirmation: $e');
       return null;
     }
   }
@@ -47,7 +48,7 @@ class RuangAfirmasiService {
         'affirmation_id': affirmationId,
       });
     } catch (e) {
-      print('Error saving affirmation: $e');
+      debugPrint('Error saving affirmation: $e');
       rethrow;
     }
   }
@@ -64,7 +65,7 @@ class RuangAfirmasiService {
           .eq('user_id', userId)
           .eq('affirmation_id', affirmationId);
     } catch (e) {
-      print('Error unsaving affirmation: $e');
+      debugPrint('Error unsaving affirmation: $e');
       rethrow;
     }
   }
@@ -84,7 +85,7 @@ class RuangAfirmasiService {
 
       return data != null;
     } catch (e) {
-      print('Error checking saved status: $e');
+      debugPrint('Error checking saved status: $e');
       return false;
     }
   }
@@ -106,7 +107,7 @@ class RuangAfirmasiService {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('Error fetching saved ruang_afirmasi: $e');
+      debugPrint('Error fetching saved ruang_afirmasi: $e');
       return [];
     }
   }
@@ -126,7 +127,7 @@ class RuangAfirmasiService {
         data.map((item) => item['affirmation_id'] as String),
       );
     } catch (e) {
-      print('Error fetching saved affirmation IDs: $e');
+      debugPrint('Error fetching saved affirmation IDs: $e');
       return {};
     }
   }
@@ -141,7 +142,7 @@ class RuangAfirmasiService {
       });
       return true;
     } catch (e) {
-      print('Error creating affirmation: $e');
+      debugPrint('Error creating affirmation: $e');
       return false;
     }
   }

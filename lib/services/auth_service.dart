@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final _supabase = Supabase.instance.client;
@@ -55,7 +56,7 @@ class AuthService {
 
       return data;
     } catch (e) {
-      print('Error fetching profile: $e');
+      debugPrint('Error fetching profile: $e');
       return null;
     }
   }
@@ -80,7 +81,7 @@ class AuthService {
 
       await _supabase.from('profiles').update(updates).eq('id', userId);
     } catch (e) {
-      print('Error updating profile: $e');
+      debugPrint('Error updating profile: $e');
       rethrow;
     }
   }
@@ -111,7 +112,7 @@ class AuthService {
 
       await _supabase.from('profiles').update(updates).eq('id', userId);
     } catch (e) {
-      print('Error updating stats: $e');
+      debugPrint('Error updating stats: $e');
       rethrow;
     }
   }
