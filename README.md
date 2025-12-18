@@ -44,7 +44,7 @@ TAHUN AJARAN 2025/2026
 
 You can download the latest version of the app (APK) via the link below:
 
-[Download APK (Google Drive)](https://drive.google.com/file/d/1g-HtIZO_qg2_a6KOjcIIxldN4pLE8_83/view?usp=sharing)
+[Download APK](https://drive.google.com/file/d/1g-HtIZO_qg2_a6KOjcIIxldN4pLE8_83/view?usp=sharing)
 
 **Installation Steps:**
 1.  Download the file from the link above.
