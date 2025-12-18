@@ -42,12 +42,14 @@ TAHUN AJARAN 2025/2026
 
 ## Download the App (Unduh Aplikasi)
 
-You can download the latest version of the app (APK) directly from this repository and install it on your Android device.
+You can download the latest version of the app (APK) via the link below:
 
-1.  Go to the `build/app/outputs/flutter-apk/` directory in this repository (or check the Releases section if available).
-2.  Download the `app-release.apk` file.
-3.  Transfer the file to your Android device.
-4.  Open the file on your device and follow the prompts to install.
+[Download APK (Google Drive)](https://drive.google.com/file/d/1g-HtIZO_qg2_a6KOjcIIxldN4pLE8_83/view?usp=sharing)
+
+**Installation Steps:**
+1.  Download the file from the link above.
+2.  Open the file on your Android device.
+3.  Follow the prompts to install.
     *   *Note: You may need to enable "Install unknown apps" or "Install from unknown sources" in your device settings.*
 
 ---
