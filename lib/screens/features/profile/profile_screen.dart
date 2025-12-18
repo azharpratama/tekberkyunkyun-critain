@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/constants/app_assets.dart';
 import '../../../viewmodels/profile_viewmodel.dart';
 import '../professional/subscription_screen.dart';
 import '../professional/consultation_screen.dart';
 import '../affirmation/saved_affirmations_screen.dart';
+
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -42,6 +43,19 @@ class _ProfileContent extends StatelessWidget {
           'Profil Saya',
           style: AppTextStyles.h2,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: AppColors.textPrimary),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EditProfileScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 24),
@@ -53,10 +67,7 @@ class _ProfileContent extends StatelessWidget {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: vm.avatarUrl.isNotEmpty
-                      ? NetworkImage(vm.avatarUrl)
-                      : const AssetImage(AppAssets.profilePlaceholder)
-                          as ImageProvider,
+                  backgroundImage: vm.profileImage,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -142,14 +153,6 @@ class _ProfileContent extends StatelessWidget {
             },
           ),
           _buildSettingItem(
-            icon: Icons.school,
-            title: 'Mentoring',
-            color: AppColors.accentOrange,
-            onTap: () {
-              Navigator.pushNamed(context, '/mentor_screen');
-            },
-          ),
-          _buildSettingItem(
             icon: Icons.favorite,
             title: 'Koleksi Afirmasi',
             color: AppColors.accentRed,
@@ -162,15 +165,33 @@ class _ProfileContent extends StatelessWidget {
               );
             },
           ),
-          _buildSettingItem(
-            icon: Icons.notifications_outlined,
-            title: 'Notifikasi',
-            onTap: () {},
+          SwitchListTile(
+            secondary: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.notifications_outlined,
+                  color: AppColors.textPrimary),
+            ),
+            title: Text(
+              'Notifikasi',
+              style:
+                  AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+            ),
+            value: vm.notificationEnabled,
+            onChanged: vm.toggleNotification,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+            activeColor: AppColors.primary,
           ),
           _buildSettingItem(
             icon: Icons.lock_outline,
             title: 'Privasi & Keamanan',
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/privacy_security');
+            },
           ),
           _buildSettingItem(
             icon: Icons.help_outline,
@@ -183,7 +204,7 @@ class _ProfileContent extends StatelessWidget {
             icon: Icons.people_outline,
             title: 'Tentang Kami',
             onTap: () {
-              Navigator.pushNamed(context, '/team_screen');
+              Navigator.pushNamed(context, '/about_us');
             },
           ),
           _buildSettingItem(
@@ -196,7 +217,9 @@ class _ProfileContent extends StatelessWidget {
           _buildSettingItem(
             icon: Icons.info_outline,
             title: 'Tentang Aplikasi',
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/about_app');
+            },
           ),
 
           const SizedBox(height: 24),

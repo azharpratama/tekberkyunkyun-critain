@@ -107,7 +107,6 @@ class _HomeContent extends StatelessWidget {
     {'label': 'Bercerita', 'icon': Icons.forum, 'index': 1},
     {'label': 'Afirmasi', 'icon': Icons.favorite, 'index': 2},
     {'label': 'Cerita', 'icon': Icons.menu_book, 'index': 3},
-    {'label': 'Profil', 'icon': Icons.person, 'index': 4},
   ];
   // -----------------------------------------------------------------
 
@@ -139,14 +138,13 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalActionItem(
+  Widget _buildActionItem(
     BuildContext context, {
     required String label,
     required IconData icon,
     required VoidCallback onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final double itemWidth = screenWidth * 0.22;
     final double containerSize = screenWidth * 0.14;
     final double iconSize = screenWidth * 0.07;
     final double fontSize = screenWidth * 0.032;
@@ -154,30 +152,27 @@ class _HomeContent extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        width: itemWidth,
-        child: Column(
-          children: [
-            Container(
-              width: containerSize,
-              height: containerSize,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: AppColors.primary, size: iconSize),
+      child: Column(
+        children: [
+          Container(
+            width: containerSize,
+            height: containerSize,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 5),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style:
-                  TextStyle(fontSize: fontSize, color: AppColors.textSecondary),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+            child: Icon(icon, color: AppColors.primary, size: iconSize),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style:
+                TextStyle(fontSize: fontSize, color: AppColors.textSecondary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -223,26 +218,20 @@ class _HomeContent extends StatelessWidget {
 
                   const SizedBox(height: 15),
 
-                  // Aksi Cepat (HORIZONTAL LIST)
+                  // Aksi Cepat (ROW)
                   _buildSectionTitle(context, 'Aksi Cepat'),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.width * 0.28,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      itemCount: quickActionsList.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 15),
-                      itemBuilder: (context, index) {
-                        final action = quickActionsList[index];
-                        return _buildHorizontalActionItem(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: quickActionsList.map((action) {
+                      return Expanded(
+                        child: _buildActionItem(
                           context,
                           label: action['label'] as String,
                           icon: action['icon'] as IconData,
                           onTap: () => onTabChange(action['index'] as int),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),

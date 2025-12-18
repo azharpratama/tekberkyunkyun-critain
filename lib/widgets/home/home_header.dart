@@ -4,7 +4,6 @@ import '../../viewmodels/profile_viewmodel.dart';
 
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_strings.dart';
-import '../../core/constants/app_assets.dart';
 import '../../core/constants/app_dimens.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -41,10 +40,7 @@ class HomeHeader extends StatelessWidget {
               return CircleAvatar(
                 radius: AppDimens.r30,
                 backgroundColor: Colors.grey[200],
-                backgroundImage: vm.avatarUrl.isNotEmpty
-                    ? NetworkImage(vm.avatarUrl)
-                    : const AssetImage(AppAssets.profilePlaceholder)
-                        as ImageProvider,
+                backgroundImage: vm.profileImage,
               );
             },
           ),

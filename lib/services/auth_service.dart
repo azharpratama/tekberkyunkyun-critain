@@ -124,4 +124,18 @@ class AuthService {
   Future<void> resetPassword(String email) async {
     await _supabase.auth.resetPasswordForEmail(email);
   }
+
+  /// Update password for authenticated user
+  Future<void> updatePassword(String newPassword) async {
+    await _supabase.auth.updateUser(
+      UserAttributes(password: newPassword),
+    );
+  }
+
+  /// Update email for authenticated user
+  Future<void> updateEmail(String newEmail) async {
+    await _supabase.auth.updateUser(
+      UserAttributes(email: newEmail),
+    );
+  }
 }
