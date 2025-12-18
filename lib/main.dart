@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
@@ -26,11 +25,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
 
-  await dotenv.load(fileName: ".env");
-
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    url: "https://oqrzburvfyezlbzjjifz.supabase.co",
+    anonKey:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcnpidXJ2ZnllemxiempqaWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5MDcxNTgsImV4cCI6MjA4MDQ4MzE1OH0.iDrUxDUKN2T9Ug5ckbjYtJup0srPbkGb4waPQ1des74",
   );
 
   runApp(const MyApp());
