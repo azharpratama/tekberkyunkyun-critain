@@ -16,6 +16,12 @@ import 'screens/features/perpustakaan_cerita/perpustakaan_cerita_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 
+import 'screens/general/faq_page.dart';
+import 'screens/general/testimonials_screen.dart';
+import 'screens/general/privacy_security_screen.dart';
+import 'screens/general/about_us_screen.dart';
+import 'screens/general/about_app_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
@@ -54,6 +60,11 @@ class MyApp extends StatelessWidget {
           '/affirmation': (context) => const AffirmationScreen(),
           '/explore': (context) => const PerpustakaanCeritaScreen(),
           '/profile': (context) => const ProfileScreen(),
+          '/faq': (context) => const FAQPage(),
+          '/testimonials_screen': (context) => const TestimonialsScreen(),
+          '/privacy_security': (context) => const PrivacySecurityScreen(),
+          '/about_us': (context) => const AboutUsScreen(),
+          '/about_app': (context) => const AboutAppScreen(),
         },
       ),
     );

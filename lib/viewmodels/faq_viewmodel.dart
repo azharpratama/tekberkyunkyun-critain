@@ -4,23 +4,34 @@ import '../models/faq_item.dart';
 class FAQViewModel extends ChangeNotifier {
   final List<FAQItem> _faqs = const [
     FAQItem(
-      question: "What is environmental-friendly product?",
+      question: "Apa itu aplikasi Ceritain?",
       answer:
-          "Eco-friendly products are products that contribute to green living or practices that help conserve resources like water and energy.",
+          "Ceritain adalah aplikasi kesehatan mental yang menyediakan ruang aman bagi Anda untuk berbagi cerita, melakukan journaling, mendapatkan afirmasi positif, dan terhubung dengan profesional kesehatan mental.",
     ),
     FAQItem(
-      question: "What is the benefit of recycling?",
+      question: "Apakah privasi saya terjaga?",
       answer:
-          "Recycling reduces pollution, saves energy, and decreases landfill waste.",
+          "Ya, privasi Anda adalah prioritas utama kami. Semua data percakapan dan profil Anda dienkripsi dan dijaga kerahasiaannya sesuai dengan standar keamanan data.",
     ),
     FAQItem(
-      question: "How can I benefit from recycling?",
+      question: "Bagaimana cara melakukan konseling?",
       answer:
-          "You help the planet, reduce waste, and support sustainability programs.",
+          "Anda dapat memilih menu 'Konsultasi Profesional', pilih psikolog atau konselor yang sesuai dengan kebutuhan Anda, dan jadwalkan sesi konsultasi melalui aplikasi.",
     ),
     FAQItem(
-      question: "What types of items can be recycled?",
-      answer: "Paper, plastic, metal, glass, and certain electronics.",
+      question: "Apakah layanan ini berbayar?",
+      answer:
+          "Aplikasi ini dapat diunduh gratis dengan fitur dasar. Namun, untuk sesi konseling profesional dan beberapa fitur premium lainnya, mungkin dikenakan biaya berlangganan atau per sesi.",
+    ),
+    FAQItem(
+      question: "Apa itu Ruang Bercerita?",
+      answer:
+          "Ruang Bercerita adalah fitur di mana Anda bisa menuliskan perasaan atau pengalaman Anda secara anonim atau pribadi untuk membantu melegakan pikiran.",
+    ),
+    FAQItem(
+      question: "Bagaimana jika saya dalam kondisi darurat?",
+      answer:
+          "Jika Anda atau seseorang yang Anda kenal dalam bahaya segera, silakan hubungi layanan darurat setempat atau hotline pencegahan bunuh diri segera. Aplikasi ini bukan pengganti layanan darurat.",
     ),
   ];
 
