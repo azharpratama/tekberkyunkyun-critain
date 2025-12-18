@@ -66,15 +66,60 @@ class _AffirmationContentState extends State<_AffirmationContent>
           AppStrings.ruangAfirmasiTitle,
           style: AppTextStyles.h2,
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.accentRed,
-          unselectedLabelColor: AppColors.textSecondary,
-          indicatorColor: AppColors.accentRed,
-          tabs: const [
-            Tab(text: AppStrings.tabReceive, icon: Icon(Icons.favorite)),
-            Tab(text: AppStrings.tabSend, icon: Icon(Icons.send)),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Container(
+            height: 50,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: AppColors.accentRed,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.grey[600],
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              dividerColor: Colors.transparent,
+              overlayColor: WidgetStateProperty.all(Colors.transparent),
+              splashFactory: NoSplash.splashFactory,
+              padding: const EdgeInsets.all(4),
+              tabs: const [
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.favorite, size: 18),
+                      SizedBox(width: 8),
+                      Text(AppStrings.tabReceive),
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.send, size: 18),
+                      SizedBox(width: 8),
+                      Text(AppStrings.tabSend),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(

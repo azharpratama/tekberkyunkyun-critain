@@ -31,35 +31,19 @@ class _ChatViewState extends State<ChatView> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
+  // With reverse: true, we don't need manual scrolling to bottom!
+  // New messages appear at index 0 (Bottom) automatically.
 
   void _sendMessage(RuangBerceritaViewModel vm) {
     if (_messageController.text.trim().isEmpty) return;
     vm.sendMessage(_messageController.text);
     _messageController.clear();
-    _scrollToBottom();
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RuangBerceritaViewModel>(
       builder: (context, vm, child) {
-        // Auto-scroll when messages change or typing status changes
-        // Note: This might trigger too often, but for now it ensures visibility
-        if (vm.messages.isNotEmpty || vm.isPartnerTyping) {
-          _scrollToBottom();
-        }
-
         final partnerName =
             vm.isSpeakerMode ? 'Pendengar Anonim' : 'Pencerita Anonim';
         final partnerColor =
@@ -127,19 +111,39 @@ class _ChatViewState extends State<ChatView> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
+                reverse: true, // Key fix: Anchor to bottom
                 padding: const EdgeInsets.all(16),
+                // +1 for typing indicator if active
                 itemCount: vm.messages.length + (vm.isPartnerTyping ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == vm.messages.length) {
-                    return const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 12),
-                        child: TypingIndicator(),
-                      ),
+                  // If reversed:
+                  // Index 0 is the bottom-most item.
+                  // If typing is active, it should be at Index 0.
+
+                  if (vm.isPartnerTyping) {
+                    if (index == 0) {
+                      return const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 12),
+                          child: TypingIndicator(),
+                        ),
+                      );
+                    }
+                    // Adjust index for messages
+                    final messageIndex = index - 1;
+                    final message = vm.messages[messageIndex];
+                    return _buildMessageBubble(
+                      message.text,
+                      isUser: message.isUser,
+                      bubbleColor: partnerColor,
                     );
                   }
 
+                  // Normal case (no typing)
+                  // vm.messages is [Newest, ..., Oldest] (Desc)
+                  // ListView (Reverse): Index 0 = Bottom.
+                  // So Index 0 should be Newest.
                   final message = vm.messages[index];
                   return _buildMessageBubble(
                     message.text,

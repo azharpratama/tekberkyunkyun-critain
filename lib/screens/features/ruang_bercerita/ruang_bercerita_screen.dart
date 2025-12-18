@@ -63,6 +63,15 @@ class _RuangBerceritaContentState extends State<_RuangBerceritaContent>
       value: _viewModel,
       child: Consumer<RuangBerceritaViewModel>(
         builder: (context, vm, child) {
+          // Listen for errors
+          if (vm.errorMessage != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(vm.errorMessage!)),
+              );
+            });
+          }
+
           return Scaffold(
             backgroundColor: const Color(0xFFF5F5F5),
             appBar: AppBar(
@@ -88,17 +97,64 @@ class _RuangBerceritaContentState extends State<_RuangBerceritaContent>
               ),
               bottom: vm.isInSession
                   ? null
-                  : TabBar(
-                      controller: _tabController,
-                      labelColor: const Color(0xFF3A9D76),
-                      unselectedLabelColor: Colors.grey,
-                      indicatorColor: const Color(0xFF3A9D76),
-                      tabs: const [
-                        Tab(text: 'Bercerita', icon: Icon(Icons.mic, size: 20)),
-                        Tab(
-                            text: 'Jadi Pendengar',
-                            icon: Icon(Icons.hearing, size: 20)),
-                      ],
+                  : PreferredSize(
+                      preferredSize: const Size.fromHeight(60),
+                      child: Container(
+                        height: 50,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: TabBar(
+                          controller: _tabController,
+                          // Bubble Style Properties
+                          indicator: BoxDecoration(
+                            color: const Color(0xFF3A9D76),
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey[600],
+                          labelStyle:
+                              const TextStyle(fontWeight: FontWeight.bold),
+                          dividerColor: Colors.transparent,
+                          overlayColor:
+                              WidgetStateProperty.all(Colors.transparent),
+                          splashFactory: NoSplash.splashFactory,
+                          padding: const EdgeInsets.all(4),
+                          tabs: const [
+                            Tab(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.mic, size: 18),
+                                  SizedBox(width: 8),
+                                  Text('Bercerita'),
+                                ],
+                              ),
+                            ),
+                            Tab(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.hearing, size: 18),
+                                  SizedBox(width: 8),
+                                  Text('Jadi Pendengar'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
             ),
             body: TabBarView(

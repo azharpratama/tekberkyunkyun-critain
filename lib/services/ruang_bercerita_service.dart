@@ -5,16 +5,26 @@ import 'package:flutter/foundation.dart';
 class RuangBerceritaService {
   final _supabase = Supabase.instance.client;
 
+  String? get currentUserId => _supabase.auth.currentUser?.id;
+
   /// Join matchmaking queue
   Future<void> joinQueue({required bool isSpeaker}) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw Exception('User not authenticated');
 
+      // First delete any existing entry to prevent unique constraint violation
+      await _supabase
+          .from('ruang_bercerita_queue')
+          .delete()
+          .eq('user_id', userId);
+
+      // Then insert fresh entry
       await _supabase.from('ruang_bercerita_queue').insert({
         'user_id': userId,
         'mode': isSpeaker ? 'speaker' : 'listener',
         'status': 'waiting',
+        'joined_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
       debugPrint('Error joining queue: $e');
@@ -131,7 +141,16 @@ class RuangBerceritaService {
         .from('ruang_bercerita_messages')
         .stream(primaryKey: ['id'])
         .eq('session_id', sessionId)
-        .order('created_at');
+        .order('created_at', ascending: false);
+  }
+
+  /// Subscribe to session status changes (for ending session)
+  Stream<Map<String, dynamic>> streamSession(String sessionId) {
+    return _supabase
+        .from('ruang_bercerita_sessions')
+        .stream(primaryKey: ['id'])
+        .eq('id', sessionId)
+        .map((event) => event.isNotEmpty ? event.first : {});
   }
 
   /// End chat session

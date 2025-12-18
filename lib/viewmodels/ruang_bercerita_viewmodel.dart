@@ -1,21 +1,33 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../models/user_stats.dart';
 import '../models/message.dart';
+import '../services/ruang_bercerita_service.dart';
+import '../models/user_stats.dart';
 
 class RuangBerceritaViewModel extends ChangeNotifier {
+  final RuangBerceritaService _service = RuangBerceritaService();
+
   // State
   int _currentStep = 0; // 0 = Intro, 1 = Searching/Waiting, 2 = Chat
   bool _isInSession = false;
   bool _isSpeakerMode = true; // true = Speaker, false = Listener
+  String? _sessionId;
+  StreamSubscription? _queueSubscription;
+  StreamSubscription? _messageSubscription;
+  StreamSubscription? _sessionSubscription;
+  String? _errorMessage;
 
   // Getters
   int get currentStep => _currentStep;
   bool get isInSession => _isInSession;
   bool get isSpeakerMode => _isSpeakerMode;
+  String? get sessionId => _sessionId;
+  String? get errorMessage => _errorMessage;
 
   // Chat State
   final List<Message> _messages = [];
-  bool _isPartnerTyping = false;
+  bool _isPartnerTyping =
+      false; // We might need a realtime typing indicator later
 
   List<Message> get messages => _messages;
   bool get isPartnerTyping => _isPartnerTyping;
@@ -28,98 +40,173 @@ class RuangBerceritaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startSession() {
-    _currentStep = 1; // Searching/Waiting
-    _isInSession = true;
-    notifyListeners();
-
-    // Mock connection delay
-    Future.delayed(const Duration(seconds: 3), () {
-      _currentStep = 2; // Connected
-      _addInitialMessage();
+  Future<void> startSession() async {
+    try {
+      _errorMessage = null;
+      _currentStep = 1; // Waiting/Searching
+      _isInSession = true;
       notifyListeners();
+
+      // 1. Join the queue
+      await _service.joinQueue(isSpeaker: _isSpeakerMode);
+
+      // 2. Try to match immediately (Active)
+      final match = await _service.attemptMatch();
+      if (match != null) {
+        // Matched immediately!
+        _handleSessionStart(match['session_id'] as String);
+        return;
+      }
+
+      // 3. If no immediate match, listen to queue status (Passive)
+      _listenToQueue();
+    } catch (e) {
+      _errorMessage = 'Gagal memulai sesi: $e';
+      _currentStep = 0;
+      _isInSession = false;
+      notifyListeners();
+    }
+  }
+
+  void _listenToQueue() {
+    _queueSubscription?.cancel();
+    _queueSubscription = _service.streamQueueStatus().listen((queueData) {
+      if (queueData.isNotEmpty) {
+        final status = queueData.first['status'] as String;
+        if (status == 'matched') {
+          // We got matched by someone else!
+          _checkForActiveSession();
+        }
+      }
     });
   }
 
-  void _addInitialMessage() {
-    final text = _isSpeakerMode
-        ? 'Halo! Saya di sini untuk mendengarkanmu. Silakan ceritakan apa saja yang ingin kamu sampaikan. 🌿'
-        : 'Halo... aku lagi sedih banget hari ini.';
+  Future<void> _checkForActiveSession() async {
+    try {
+      // Small delay to ensure DB propagation
+      await Future.delayed(const Duration(milliseconds: 500));
+      final session = await _service.getActiveSession();
+      if (session != null) {
+        _handleSessionStart(session['id'] as String);
+      }
+    } catch (e) {
+      print('Error checking session: $e');
+    }
+  }
 
-    // Simulate partner typing first
-    _isPartnerTyping = true;
+  void _handleSessionStart(String sessionId) {
+    _queueSubscription?.cancel(); // Stop listening to queue
+    _sessionId = sessionId;
+    _currentStep = 2; // Chat Interface
+    _messages.clear();
+
+    // Subscribe to messages
+    _subscribeToMessages();
+
+    // Subscribe to session status
+    _subscribeToSessionStatus();
+
     notifyListeners();
+  }
 
-    Future.delayed(const Duration(seconds: 2), () {
-      _isPartnerTyping = false;
-      _messages.add(Message(
-        id: DateTime.now().toString(),
-        text: text,
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
-      notifyListeners();
+  void _subscribeToSessionStatus() {
+    if (_sessionId == null) return;
+
+    _sessionSubscription?.cancel();
+    _sessionSubscription = _service.streamSession(_sessionId!).listen((data) {
+      if (data.isNotEmpty) {
+        final status = data['status'] as String?;
+        if (status == 'ended') {
+          // Partner ended the session
+          _handlePartnerEndedSession();
+        }
+      }
     });
   }
 
-  void sendMessage(String text) {
-    if (text.trim().isEmpty) return;
+  void _handlePartnerEndedSession() {
+    if (!_isInSession || _sessionId == null) return;
 
-    // Add user message
-    _messages.add(Message(
-      id: DateTime.now().toString(),
-      text: text,
-      isUser: true,
-      timestamp: DateTime.now(),
-    ));
+    _cleanupSessionState();
+    _errorMessage = 'Teman bercerita telah mengakhiri sesi.';
     notifyListeners();
-
-    // Simulate partner response
-    _simulatePartnerResponse();
   }
 
-  void _simulatePartnerResponse() {
-    // 1. Delay before typing
-    Future.delayed(const Duration(seconds: 1), () {
-      _isPartnerTyping = true;
-      notifyListeners();
+  void _subscribeToMessages() {
+    if (_sessionId == null) return;
 
-      // 2. Typing duration
-      Future.delayed(const Duration(seconds: 2), () {
-        _isPartnerTyping = false;
+    _messageSubscription?.cancel();
+    _messageSubscription = _service.streamMessages(_sessionId!).listen((data) {
+      // Map Supabase data to Message model
+      // Note: We need to know current user ID to determine isUser
+      // Since service handles auth, we assume sender_id match check happens there or strictly here
+      // For simplicity, we fetch messages and re-map.
+      // But `Message` model relies on `isUser` boolean.
+      // We calculate `isUser` by comparing with current user ID from Supabase Auth.
 
-        final responses = _isSpeakerMode
-            ? [
-                // Responses when user is Speaker (Partner is Listener)
-                'Terima kasih sudah mau berbagi. Aku mendengarkan. 💚',
-                'Itu pasti tidak mudah bagimu. Aku di sini untukmu.',
-                'Kamu tidak sendirian dalam hal ini.',
-                'Pelan-pelan saja ceritanya, aku siap mendengarkan.',
-              ]
-            : [
-                // Responses when user is Listener (Partner is Speaker)
-                'Iya, rasanya berat sekali.',
-                'Terima kasih sudah mendengarkan.',
-                'Aku merasa sedikit lebih lega sekarang.',
-                'Senang ada yang mau mengerti.',
-              ];
+      final currentUserId = _service.currentUserId;
 
+      _messages.clear();
+      for (var item in data) {
+        final isMe = item['sender_id'] == currentUserId;
         _messages.add(Message(
-          id: DateTime.now().toString(),
-          text: responses[DateTime.now().second % responses.length],
-          isUser: false,
-          timestamp: DateTime.now(),
+          id: item['id'] as String,
+          text: item['content'] as String,
+          isUser: isMe,
+          timestamp: DateTime.parse(item['created_at'] as String).toLocal(),
         ));
-        notifyListeners();
-      });
+      }
+      notifyListeners();
     });
   }
 
-  void endSession() {
-    if (_isSpeakerMode) {
-      UserStatsService.completeSpeakingSession();
-    } else {
-      UserStatsService.completeListeningSession();
+  Future<void> sendMessage(String text) async {
+    if (text.trim().isEmpty || _sessionId == null) return;
+
+    try {
+      // Optimistic update not strictly needed with realtime, but feels faster
+      // _messages.add(Message(
+      //   id: 'temp',
+      //   text: text,
+      //   isUser: true,
+      //   timestamp: DateTime.now(),
+      // ));
+      // notifyListeners();
+
+      await _service.sendMessage(sessionId: _sessionId!, content: text.trim());
+    } catch (e) {
+      print('Error sending message: $e');
+      // Handle error (maybe remove optimistic message)
+    }
+  }
+
+  Future<void> endSession() async {
+    if (_sessionId != null) {
+      try {
+        await _service.endSession(sessionId: _sessionId!);
+      } catch (e) {
+        print('Error ending session: $e');
+      }
+    }
+
+    _cleanupSessionState(awardPoints: true);
+  }
+
+  void _cleanupSessionState({bool awardPoints = false}) {
+    // Cleanup subscriptions
+    _queueSubscription?.cancel();
+    _messageSubscription?.cancel();
+    _sessionSubscription?.cancel();
+    _sessionId = null;
+
+    // Award points
+    if (awardPoints || true) {
+      // Always award points for participation
+      if (_isSpeakerMode) {
+        UserStatsService.completeSpeakingSession();
+      } else {
+        UserStatsService.completeListeningSession();
+      }
     }
 
     _isInSession = false;
@@ -130,4 +217,12 @@ class RuangBerceritaViewModel extends ChangeNotifier {
 
   // Helper to get reward points based on mode
   int get rewardPoints => _isSpeakerMode ? 5 : 10;
+
+  @override
+  void dispose() {
+    _queueSubscription?.cancel();
+    _messageSubscription?.cancel();
+    _sessionSubscription?.cancel();
+    super.dispose();
+  }
 }
