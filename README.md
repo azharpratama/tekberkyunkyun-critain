@@ -1,56 +1,30 @@
 # Critain - Mental Health Companion App
 
-Critain is a mobile application designed to provide a safe and supportive ecosystem for mental well-being. It connects users who need to be heard with compassionate listeners (introverts/peers) and provides tools for self-affirmation and storytelling.
+![Flutter](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?logo=dart&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-Built with **Flutter** and powered by **Supabase**.
-
----
-
-## Project Description (Deskripsi Proyek)
-
-Critain aims to reduce the stigma around mental health by providing anonymous, accessible, and engaging tools. The app features:
-
-*   **Ruang Bercerita**: A real-time chat platform connecting *Storytellers* (users needing to vent) with *Listeners*. It features a queue-based matchmaking system and anonymous messaging.
-*   **Ruang Afirmasi**: A positive space where users can receive daily affirmations or send supportive messages to the community.
-*   **Perpustakaan Cerita**: A library of user-submitted stories and mental health articles to inspire and educate.
-*   **Gamification**: Users earn points and badges (e.g., Bronze, Silver, Gold Listener) for helping others.
+Critain is a cross-platform mobile application providing a safe, supportive ecosystem for mental well-being. Built with **Flutter** and **Supabase (PostgreSQL with Row-Level Security)**, it enables real-time peer counseling, daily affirmation streams, anonymous storytelling, and gamified listener progression.
 
 ---
 
-## Our Team (Tim Pengembang)
+## ✨ Core Features
 
-**Kelompok 9 Teknologi Berkembang**
-
-*   Rafindra Nabiel Fawwaz (5026231024)
-*   Azhar Aditya Pratama (5026231084)
-*   Firmansyah Adi Prasetyo (5026231085)
-*   Muhammad Fawwaz Al-Amien (5026231092)
-*   Muhammad Artha Maulana Suswanto (5026231134)
-*   Fachreza Aptadhi Kurniawan (5026231135)
-*   Muhammad Abyan Tsabit Amani (5026231163)
-
-**Dosen Pengampu**\
-Izzat Aulia Akbar, S.Kom., M.Eng., Ph.D.
-
-**INSTITUT TEKNOLOGI SEPULUH NOPEMBER**\
-SURABAYA\
-TAHUN AJARAN 2025/2026
+*   **Ruang Bercerita**: Real-time queue-based matchmaking connecting *Storytellers* (users seeking a listening ear) with peer *Listeners*, featuring anonymous end-to-end chat streams.
+*   **Ruang Afirmasi**: Community-powered daily positive affirmation feed with real-time reactions and user submissions.
+*   **Perpustakaan Cerita**: Curated library of user-submitted mental wellness stories and psychoeducational articles.
+*   **Gamified Listener Progression**: Tiered badge progression (Bronze, Silver, Gold Listener) incentivizing compassionate community moderation and peer support.
 
 ---
 
----
+## 📱 Download the App
 
-## Download the App (Unduh Aplikasi)
+Download the Android APK release to test on device:
 
-You can download the latest version of the app (APK) via the link below:
+👉 **[Download Critain APK](https://drive.google.com/file/d/1g-HtIZO_qg2_a6KOjcIIxldN4pLE8_83/view?usp=sharing)**
 
-[Download APK](https://drive.google.com/file/d/1g-HtIZO_qg2_a6KOjcIIxldN4pLE8_83/view?usp=sharing)
-
-**Installation Steps:**
-1.  Download the file from the link above.
-2.  Open the file on your Android device.
-3.  Follow the prompts to install.
-    *   *Note: You may need to enable "Install unknown apps" or "Install from unknown sources" in your device settings.*
+*(Note: Enable "Install from unknown sources" in device settings if prompted during installation)*
 
 ---
 
@@ -161,6 +135,21 @@ lib/
 *   **State Management**: Provider
 *   **Backend**: Supabase (PostgreSQL, Authentication, Realtime, Storage). See [Database ERD](ERD.md) for schema details.
 *   **Navigation**: Flutter Navigator 1.0 (Push/Pop)
+
+---
+
+## Contributors & Academic Context
+
+Developed by **Kelompok 9 Teknologi Berkembang**, Institut Teknologi Sepuluh Nopember (ITS):
+- Rafindra Nabiel Fawwaz (`5026231024`)
+- Azhar Aditya Pratama (`5026231084`)
+- Firmansyah Adi Prasetyo (`5026231085`)
+- Muhammad Fawwaz Al-Amien (`5026231092`)
+- Muhammad Artha Maulana Suswanto (`5026231134`)
+- Fachreza Aptadhi Kurniawan (`5026231135`)
+- Muhammad Abyan Tsabit Amani (`5026231163`)
+
+*Advisor:* Izzat Aulia Akbar, S.Kom., M.Eng., Ph.D.
 
 ---
 
